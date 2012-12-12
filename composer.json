@@ -5,7 +5,6 @@
     "keywords": ["framework", "rabbit", "rabbitcms", "php", "fast"],
     "homepage": "https://github.com/rabbit-project",
      "require-dev": {
-        "doctrine/common": ">=2.1",
         "phpunit/PHPUnit": "3.7.*"
     },
     "require": {
