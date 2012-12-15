@@ -1,5 +1,5 @@
 <?php
-namespace Rabbit\ServiceException;
+namespace Rabbit\Service;
 
 class ServiceException extends \Exception {
 	

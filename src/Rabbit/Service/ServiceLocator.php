@@ -1,32 +1,71 @@
 <?php
 namespace Rabbit\Service;
 
-use Rabbit\ServiceException\ServiceException;
-use \Closure;
+use Rabbit\Service\ServiceException;
 
 class ServiceLocator {
 	
 	private static $_service = array();
+	private static $_instance = array();
 	
-	public static function getService($name) {
-		if(isset(self::$_service[$name])){
-			$f = self::$_service[$name]
-			return call_user_func_array($f, self::$_service[$name]["args"]);
+	public static function getService($name, array $params=array()) {
+		if(isset(self::$_instance[$name]))
+			return self::$_instance[$name];
+		
+		$service = isset(self::$_service[$name])? self::$_service[$name] : array("type"=>$name,"singleton"=>false);
+		
+		if($service["type"] instanceof \Closure){
+			$object = call_user_func_array($service["type"], $params);
+		}else{
+			$object = self::reflexionInstance($service["type"]); 
 		}
 		
-		throw new ServiceException(sprintf("Não foi possível localizar o serviço <strong>%s</strong>",$name));
+		if($service["singleton"]==true)
+			self::$_instance[$name] = $object;
+		
+		return $object;
 	}
 	
-	public static function register($name, Closure $call) {
-		self::$_service[$name] = $call;
+	public static function register($name, $type, $singleton = null ) {
+		self::$_service[$name]["type"] = $type;
+		self::$_service[$name]["singleton"] = $singleton;
 	}
 	
 	public static function isRegistred($name) {
-		return array_key_exists($name, self::$_service[$name]);
+		return array_key_exists($name, self::$_service) || array_key_exists($name, self::$_instance);
 	}
 
-	protected static function reflexion() {
+	protected static function reflexionInstance($cls) {
+		$rc = new \ReflectionClass($cls);		
 		
-		self::getService($name);
+		if(!$rc->isInstantiable())
+			throw new ServiceException(sprintf("Não é possível instanciar uma interface"));
+				
+		$construct = $rc->getConstructor();
+		
+		if(is_null($construct))
+			return $rc->newInstanceWithoutConstructor();
+		
+		$args = array();
+		
+		foreach($construct->getParameters() as $param) {
+			
+			$clsParam = $param->getClass();		
+			
+			if($param->isDefaultValueAvailable())
+				break;
+			
+			if(is_null($clsParam))
+				throw new ServiceException(sprintf("O paramentro <strong>%s</strong> possue uma dependência de <strong>%s</strong>", $param->getName(), $cls));
+			
+			$args[] = self::reflexionInstance($clsParam->getName());
+		}
+		
+		return $rc->newInstanceArgs($args);
+		
+	}
+	
+	public static function registerInstance($name, $instance) {
+		self::$_instance[$name] = $instance;
 	}
 }

@@ -2,6 +2,8 @@
 
 namespace Rabbit\Application;
 
+use Rabbit\Service\ServiceLocator;
+
 use Rabbit\Controller\Exception;
 use Rabbit\Routing\Router;
 
@@ -52,8 +54,6 @@ class Front {
 			$this->_router->setModuleDefault($this->_config["moduleDefault"]);
 		
 		$this->_router->execute();
-		
-		ServiceLocator::getService("Application\Rabbit\Index")->indexAction();
 		
 	}
 	
@@ -123,10 +123,15 @@ class Front {
 	 * @throws Exception
 	 */
 	private function registerServices(array $services) {
-		foreach($services as $servKey => $servCall){
-			if(ServiceLocator::isExist($servKey))
+		foreach($services as $servKey => $serv){
+			if(ServiceLocator::isRegistred($servKey))
 				throw new Exception(sprintf('O servico <strong>%s</strong> já existe o mesmo não pode ser novamente registrado', $servKey));
-			ServiceLocator::register($servKey, $servCall);
+			
+			if(is_array($serv)){
+				ServiceLocator::register($servKey, $serv["fn"], $serv["unique"]);
+			}else{
+				ServiceLocator::register($servKey, $serv);
+			}
 		}
 	}	
 		
