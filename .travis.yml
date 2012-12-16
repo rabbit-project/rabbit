@@ -8,3 +8,5 @@ php:
 before_script:
  - wget http://getcomposer.org/composer.phar
  - composer install --dev
+ 
+script: phpunit -c phpunit.xml.dist
