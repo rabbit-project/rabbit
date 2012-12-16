@@ -10,7 +10,7 @@
          bootstrap="./autoload.php.dist">
     <testsuites>
         <testsuite name="Rabbit CMS Test Suite">
-            <directory>./RabbitTest</directory>
+            <directory>./src/RabbitTest</directory>
         </testsuite>
     </testsuites>
 </phpunit>
