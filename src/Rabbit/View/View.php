@@ -49,4 +49,7 @@ class View implements ViewInterface{
 		return ob_get_clean();
 	}
 	
+	public function __call($name, $params) {
+		echo $name;
+	}
 }

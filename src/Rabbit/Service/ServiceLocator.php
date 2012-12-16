@@ -3,10 +3,13 @@ namespace Rabbit\Service;
 
 use Rabbit\Service\ServiceException;
 
-class ServiceLocator {
+abstract class ServiceLocator {
 	
 	private static $_service = array();
 	private static $_instance = array();
+	
+	private function __construct() {}
+	private function __clone() {}
 	
 	public static function getService($name, array $params=array()) {
 		if(isset(self::$_instance[$name]))
@@ -39,7 +42,7 @@ class ServiceLocator {
 		$rc = new \ReflectionClass($cls);		
 		
 		if(!$rc->isInstantiable())
-			throw new ServiceException(sprintf("Não é possível instanciar uma interface"));
+			throw new ServiceException(sprintf("Não é possível instanciar uma interface/abstract: <strong>%s</strong>", $cls));
 				
 		$construct = $rc->getConstructor();
 		
@@ -50,13 +53,13 @@ class ServiceLocator {
 		
 		foreach($construct->getParameters() as $param) {
 			
-			$clsParam = $param->getClass();		
-			
 			if($param->isDefaultValueAvailable())
 				break;
 			
+			$clsParam = $param->getClass();
+			
 			if(is_null($clsParam))
-				throw new ServiceException(sprintf("O paramentro <strong>%s</strong> possue uma dependência de <strong>%s</strong>", $param->getName(), $cls));
+				throw new ServiceException(sprintf("O paramentro <strong>%s</strong> possue uma dependência e o mesmo não pode ser localizado para: <strong>%s</strong>", $param->getName(), $cls));
 			
 			$args[] = self::reflexionInstance($clsParam->getName());
 		}
