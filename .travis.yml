@@ -6,4 +6,5 @@ php:
   - 5.4
 
 before_script:
+ - wget http://getcomposer.org/composer.phar
  - composer install --dev
