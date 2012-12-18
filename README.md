@@ -1,4 +1,4 @@
-Rabbit
+Rabbit [![Build Status](https://travis-ci.org/rabbit-project/rabbit.png?branch=develop)](https://travis-ci.org/rabbit-project/rabbit)
 ======
 
 Rabbit é um mini-framewok para auxiliar a criação do RabbitCMS
