@@ -10,7 +10,8 @@
     "require": {
     	"php": ">=5.3.3",
         "symfony/http-foundation": "v2.1.4",
-        "symfony/yaml": "v2.1.4"
+        "symfony/yaml": "v2.1.4",
+        "doctrine/common": "2.3.0"
     },
     "authors": [
         {
