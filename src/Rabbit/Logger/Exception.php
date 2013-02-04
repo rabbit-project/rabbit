@@ -1,5 +1,5 @@
 <?php
-namespace Rabbit\Controller;
+namespace Rabbit\Logger;
 
 class Exception extends \Exception {
 	

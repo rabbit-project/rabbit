@@ -1,0 +1,31 @@
+{
+    "name": "rabbit-project/rabbit-reflection-util",
+    "type": "library",
+    "description": "O Rabbit ReflectionUtil",
+    "keywords": ["framework", "rabbit", "rabbitcms", "php", "fast", "reflection"],
+    "homepage": "https://github.com/rabbit-project",
+     "require-dev": {
+        "phpunit/PHPUnit": "3.7.*"
+    },
+    "require": {
+    	"php": ">=5.3.3"
+    },
+    "authors": [
+        {
+            "name": "Erick Leao",
+            "email": "erickleao@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Rabbit\\Reflection\\": ""
+        }
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev",
+            "dev-develop": "1.0-dev"
+        }
+    }
+}

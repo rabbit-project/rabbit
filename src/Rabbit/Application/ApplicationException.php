@@ -1,6 +1,6 @@
 <?php
 namespace Rabbit\Application;
 
-class ApplicationException extends Exception {
+class ApplicationException extends \Exception {
 	
 }

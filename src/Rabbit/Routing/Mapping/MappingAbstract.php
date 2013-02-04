@@ -13,12 +13,14 @@ abstract class MappingAbstract {
 	
 	protected $_params;
 	protected $_url;
+	protected $_requirements;
 	protected $_hierarchy;
 		
-	public function __construct($url, array $params = array()){
+	public function __construct($url, array $params = array(), array $requirements = array()){
 		$this->_url = $url;
 		$this->_hierarchy = count(explode("/", $url)) - 1;
 		$this->_params = $params;
+		$this->_requirements = $requirements;
 		$this->init();
 	}
 		

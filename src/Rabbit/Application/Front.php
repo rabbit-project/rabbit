@@ -2,6 +2,8 @@
 
 namespace Rabbit\Application;
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
+
 use Rabbit\Service\ServiceLocator;
 
 use Rabbit\Controller\Exception;
@@ -47,7 +49,7 @@ class Front {
 		
 		if(!$this->_router)
 			$this->_router = new Router($this->_request);
-		
+				
 		$this->mappingModules();
 		
 		if(isset($this->_config["moduleDefault"]))
@@ -58,8 +60,7 @@ class Front {
 	}
 	
 	private function initWhithConfig() {
-		$pathConfig = RABBIT_PATH_APPLICATION . DS . "config";
-		$fileConfigGlobalURI = $pathConfig . DS . "global.config.php";
+		$fileConfigGlobalURI = RABBIT_PATH_APPLICATION . DS . "config" . DS . "global.config.php";
 		
 		if(!file_exists($fileConfigGlobalURI))
 			throw new Exception(sprintf("Não foi possível encontrar o arquivo de configuração: <strong>%s</strong>", $fileConfigGlobalURI));
@@ -102,18 +103,19 @@ class Front {
 	
 	public function addRouters(array $routers) {
 		foreach ($routers as $name => $params){
-			if(isset($params['type'])){
+			if(!isset($params['type'])){
 				$clsName = 'Rabbit\Routing\Mapping\Literal';
 			}else{
 				$clsName = $params['type'];
 			}
 			
 			$defaults = isset($params['defaults'])? $params['defaults'] : array();
+			$requirements = isset($params['requirements'])? $params['requirements'] : array();
 			
 			if(!isset($params['url']))
 				throw new Rabbit\Routing\Exception('Não foi definido o parametro "url" de mapeamento');
 			
-			$this->getRouter()->addMapping($name, new $clsName($params['url'], $defaults));
+			$this->getRouter()->addMapping($name, new $clsName($params['url'], $defaults, $requirements));
 		}
 	}
 	
