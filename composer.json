@@ -1,41 +1,7 @@
 {
-<<<<<<< HEAD
-	"name": "rabbit-project/rabbit",
-	"type": "library",
-	"description": "O Rabbit é um conjunto de código baseado em PHP - Framework simples para controlar a arquitetura HMVC, utilizar como ORM Doctrine",
-	"keywords": ["framework", "rabbit", "rabbitcms", "php", "fast"],
-	"homepage": "https://github.com/rabbit-project",
-	"require-dev": {
-		"phpunit/PHPUnit": "3.7.*"
-	},
-	"require": {
-		"php": ">=5.3.3",
-		"symfony/http-foundation": "v2.1.4",
-		"symfony/yaml": "v2.1.4",
-		"doctrine/common": "2.3.0"
-	},
-	"authors": [
-		{
-			"name": "Erick Leao",
-			"email": "erickleao@gmail.com"
-		}
-	],
-	"autoload": {
-		"psr-0": {
-			"Rabbit\\": "src/"
-		}
-	},
-	"minimum-stability": "dev",
-	"extra": {
-		"branch-alias": {
-			"dev-master": "1.0-dev",
-			"dev-develop": "1.0-dev"
-		}
-	}
-=======
     "name": "rabbit-project/rabbit",
     "type": "library",
-    "description": "O Rabbit é um conjunto de código baseado em PHP - Framework simples para controlar a arquitetura HMVC, utilizar como ORM Doctrine",
+    "description": "O Rabbit Ã© um conjunto de cÃ³digo baseado em PHP - Framework simples para controlar a arquitetura HMVC, utilizar como ORM Doctrine",
     "keywords": ["framework", "rabbit", "rabbitcms", "php", "fast"],
     "homepage": "https://github.com/rabbit-project",
      "require-dev": {
@@ -65,5 +31,4 @@
             "dev-develop": "1.0-dev"
         }
     }
->>>>>>> 768cf11eb0abfdc3570c8d8209d79037048a279a
 }
