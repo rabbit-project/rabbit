@@ -2,16 +2,13 @@
 
 namespace Rabbit\Application;
 
-use Doctrine\Common\Annotations\AnnotationRegistry;
-
-use Rabbit\Service\ServiceLocator;
-
-use Rabbit\Controller\Exception;
+use DirectoryIterator;
 use Rabbit\Routing\Router;
-
-use Symfony\Component\Yaml\Yaml;
-use Symfony\Component\HttpFoundation\Response;
+use Rabbit\Routing\RouterException;
+use Rabbit\Service\ServiceLocator;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Yaml\Yaml;
 
 
 
@@ -20,7 +17,7 @@ class Front {
 	private static $_instance;
 	
 	/**
-	 * @var \Rabbit\Routing\Router
+	 * @var Router
 	 */
 	private $_router;
 	
@@ -63,7 +60,7 @@ class Front {
 		$fileConfigGlobalURI = RABBIT_PATH_APPLICATION . DS . "config" . DS . "global.config.php";
 		
 		if(!file_exists($fileConfigGlobalURI))
-			throw new Exception(sprintf("Não foi possível encontrar o arquivo de configuração: <strong>%s</strong>", $fileConfigGlobalURI));
+			throw new ApplicationException(sprintf("Não foi possível encontrar o arquivo de configuração: <strong>%s</strong>", $fileConfigGlobalURI));
 		
 		$this->_config = include $fileConfigGlobalURI;
 	}
@@ -72,7 +69,7 @@ class Front {
 	 * Mapea todos os módulos
 	 */
 	private function mappingModules() {
-		$dirModules = new \DirectoryIterator(RABBIT_PATH_MODULE);
+		$dirModules = new DirectoryIterator(RABBIT_PATH_MODULE);
 		$load = ServiceLocator::getService("Rabbit\Load");
 		foreach($dirModules as $dirModule){
 			if($dirModule->isDir() && !$dirModule->isDot()){
@@ -101,10 +98,14 @@ class Front {
 		}		
 	}
 	
+	/**
+	 * @param array $routers
+	 * @throws RouterException
+	 */
 	public function addRouters(array $routers) {
 		foreach ($routers as $name => $params){
 			if(!isset($params['type'])){
-				$clsName = 'Rabbit\Routing\Mapping\Literal';
+				$clsName = 'Rabbit\Routing\Mapping\RegexMap';
 			}else{
 				$clsName = $params['type'];
 			}
@@ -113,7 +114,7 @@ class Front {
 			$requirements = isset($params['requirements'])? $params['requirements'] : array();
 			
 			if(!isset($params['url']))
-				throw new Rabbit\Routing\Exception('Não foi definido o parametro "url" de mapeamento');
+				throw new RouterException('Não foi definido o parametro "url" de mapeamento');
 			
 			$this->getRouter()->addMapping($name, new $clsName($params['url'], $defaults, $requirements));
 		}
@@ -122,12 +123,12 @@ class Front {
 	/**
 	 * Registra os Services
 	 * @param array $services
-	 * @throws Exception
+	 * @throws ApplicationException
 	 */
 	private function registerServices(array $services) {
 		foreach($services as $servKey => $serv){
 			if(ServiceLocator::isRegistred($servKey))
-				throw new Exception(sprintf('O servico <strong>%s</strong> já existe o mesmo não pode ser novamente registrado', $servKey));
+				throw new ApplicationException(sprintf('O servico <strong>%s</strong> já existe o mesmo não pode ser novamente registrado', $servKey));
 			
 			if(is_array($serv)){
 				ServiceLocator::register($servKey, $serv["fn"], $serv["unique"]);
@@ -170,7 +171,7 @@ class Front {
 		
 	/**
 	 * Retorna o Routing
-	 * @return \Rabbit\Routing\Router
+	 * @return Router
 	 */
 	public function getRouter() {
 		return $this->_router;
