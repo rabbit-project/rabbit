@@ -1,6 +1,6 @@
 <?php
 namespace Rabbit\Application;
 
-class FileNotFoundException extends Exception {
+class FileNotFoundException extends ApplicationException {
 	
 }

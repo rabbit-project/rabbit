@@ -2,6 +2,12 @@
 
 namespace Rabbit\Application;
 
+use Rabbit\Logger\LoggerException;
+
+use Rabbit\Logger\LoggerType;
+
+use Rabbit\Logger\LoggerManager;
+
 use DirectoryIterator;
 use Rabbit\Routing\Router;
 use Rabbit\Routing\RouterException;
@@ -10,8 +16,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Yaml\Yaml;
 
-
-
+/**
+ * Front
+ * Classe principal para application do RabbitCMS
+ * @author Erick Leão <erickleao@rabbit-cms.com.br>
+ */
 class Front {
 	
 	private static $_instance;
@@ -35,14 +44,20 @@ class Front {
 	
 	private $_modules = array();
 	
+	private $_log;
+	
 	private function __construct() {
-		$this->initWhithConfig();
+		$this->_log = LoggerManager::getInstance()->getLogger(get_class());
 		
+		$this->initWhithConfig();
+				
 		if(!$this->_request)
 			$this->_request = Request::createFromGlobals();
 		
 		if(!$this->_response)
 			$this->_response = new Response();
+		
+		$this->initLogger();
 		
 		if(!$this->_router)
 			$this->_router = new Router($this->_request);
@@ -53,16 +68,37 @@ class Front {
 			$this->_router->setModuleDefault($this->_config["moduleDefault"]);
 		
 		$this->_router->execute();
-		
+	}
+	
+	private function initLogger() {
+		if(isset($this->_config["loggerManager"])){
+			if(isset($this->_config["loggerManager"]["trace"]) && $this->_config["loggerManager"]["trace"])
+				LoggerManager::getInstance()->setTrace(true);
+				
+			if(isset($this->_config["loggerManager"]["export"]))
+				LoggerManager::getInstance()->setExportConfig($this->_config["loggerManager"]["export"]);
+				
+			if(isset($this->_config["loggerManager"]["active"]) && $this->_config["loggerManager"]["active"]){
+				LoggerManager::getInstance()->setActive(true);
+				if(isset($this->_config["loggerManager"]["nivel"]) && $this->_config["loggerManager"]["nivel"] instanceof LoggerType){
+					LoggerManager::getInstance()->setNivelLogger($this->_config["loggerManager"]["nivel"]);
+				}
+			}
+		}
 	}
 	
 	private function initWhithConfig() {
 		$fileConfigGlobalURI = RABBIT_PATH_APPLICATION . DS . "config" . DS . "global.config.php";
+		$fileConfigLocalURI = RABBIT_PATH_APPLICATION . DS . "config" . DS . "local.config.php";
 		
 		if(!file_exists($fileConfigGlobalURI))
 			throw new ApplicationException(sprintf("Não foi possível encontrar o arquivo de configuração: <strong>%s</strong>", $fileConfigGlobalURI));
 		
 		$this->_config = include $fileConfigGlobalURI;
+		
+		if(file_exists($fileConfigLocalURI))
+			$this->_config = array_merge($this->_config, include $fileConfigLocalURI);		
+		
 	}
 	
 	/**
@@ -149,8 +185,10 @@ class Front {
 		return self::$_instance;
 	}
 	
-	public static function run() {
+	public function run() {
+		$this->_log->log("Iniciando Front", LoggerType::get("RABBIT"));
 		self::getInstance()->dispatch();
+		$this->_log->log("Finalizando Front", LoggerType::get("RABBIT"));
 	}
 	
 	/**
