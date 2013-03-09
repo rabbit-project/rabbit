@@ -19,11 +19,11 @@ class View implements ViewInterface{
 	public function __construct($datas = null, array $config = array()){
 		$this->datas = $datas;
 		if(is_array($datas) || is_object($datas))
-			$this->registerDatasThisClass($datas);
+			$this->registerDatasForView($datas);
 		$this->_config = $config;
 	}
 	
-	public function registerDatasThisClass($datas) {
+	public function registerDatasForView($datas) {
 		foreach($datas as $key => $value)
 			$this->$key = $value;
 	}
@@ -50,6 +50,6 @@ class View implements ViewInterface{
 	}
 	
 	public function __call($name, $params) {
-		echo $name;
+		//echo $name;
 	}
 }

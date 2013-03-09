@@ -64,11 +64,11 @@ class RegexMap extends MappingAbstract{
 					$regex[] = str_replace("]", ")?", str_replace("*", "(.*)", $part));
 			}else{
 				$regex[] = preg_replace("#(\.)#","\\\\\\1",$part);
-				$this->_hierarchy +=1; //tipos comuns tem mais força então ganha pontos
+				$this->_hierarchy +=2; //tipos comuns tem mais força então ganha pontos
 			}
 		}
 		
-		/* var_dump(preg_match('#^' . str_replace("]", ")?",str_replace("[", "(",implode("/", $regex))) . '/?$#i', $url));
+		/*var_dump(preg_match('#^' . str_replace("]", ")?",str_replace("[", "(",implode("/", $regex))) . '/?$#i', $url));
 		print_pre('#^' . str_replace("]", ")?",str_replace("[", "(",implode("/", $regex))) . '/?$#i');		
 		print_pre($url . ' - ' .  $this->_url);
 		print_pre($request->getBasePath());

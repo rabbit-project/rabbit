@@ -44,6 +44,11 @@ class Front {
 	
 	private $_modules = array();
 	
+	/**
+	 * @var multiple:PluginInterface
+	 */
+	private $_plugins = array();
+	
 	private $_log;
 	
 	private function __construct() {
@@ -60,14 +65,18 @@ class Front {
 		$this->initLogger();
 		
 		if(!$this->_router)
-			$this->_router = new Router($this->_request);
-				
+			$this->_router = new Router($this->_request);		
+		
 		$this->mappingModules();
+		//$this->initPlugin();
 		
 		if(isset($this->_config["moduleDefault"]))
 			$this->_router->setModuleDefault($this->_config["moduleDefault"]);
-		
-		$this->_router->execute();
+	}
+	
+	private function initPlugin() {
+		foreach($this->_plugins as $plugin)
+			$plugin->execute();
 	}
 	
 	private function initLogger() {
@@ -122,6 +131,21 @@ class Front {
 					$config = $clsI->getConfig();
 					if(isset($config["services"]))
 						$this->registerServices($config["services"]);
+					
+					if(isset($config["plugins"])){
+						$plugins = array();
+						
+						if(!is_string($config["plugins"]) && !is_array($config["plugins"]))
+							throw new ApplicationException(sprintf("A configuração do plugin no modulo %s não é uma String ou um Array", $dirModule->getFilename()));
+						
+						$plugins = (is_string($config["plugins"]))? array($config["plugins"]) : $config["plugins"];
+						
+						
+						foreach ($plugins as $pluginName){
+							$plugin = new $pluginName($this->_request, $this->_response);
+							$this->registerPlugin($plugin);
+						}
+					}
 				}
 				
 				$routerFile = $dirModule->getPathname() . DS . 'router.yml';
@@ -176,18 +200,22 @@ class Front {
 		
 	/**
 	 * Inicia a configuração do sistema
-	 * @return Rabbit\Application
+	 * @return Front
 	 */
 	public static function getInstance() {
-		if(!self::$_instance instanceof Front)
-			self::$_instance = new self();
+		if(!self::$_instance instanceof Front){
+			self::$_instance = new self;
+		}
 		
 		return self::$_instance;
 	}
 	
 	public function run() {
 		$this->_log->log("Iniciando Front", LoggerType::get("RABBIT"));
-		self::getInstance()->dispatch();
+		$self = self::getInstance();
+		$this->_router->execute();
+		$this->initPlugin();
+		$self->dispatch();
 		$this->_log->log("Finalizando Front", LoggerType::get("RABBIT"));
 	}
 	
@@ -217,5 +245,13 @@ class Front {
 	
 	public function setRouter(Router $router) {
 		$this->_router = $router;
+	}
+	
+	public function registerPlugin(PluginInterface $plugin) {
+		array_push($this->_plugins, $plugin);
+	}
+	
+	public function getPlugins() {
+		return $this->_plugins;
 	}
 }

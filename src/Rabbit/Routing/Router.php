@@ -21,6 +21,11 @@ class Router {
 	 */
 	private $_request;
 	
+	/**
+	 * @var MappingAbstract
+	 */
+	private $_router;
+	
 	public function __construct(Request $request) {
 		$this->_request = $request;
 	}
@@ -28,7 +33,7 @@ class Router {
 	public function execute() {
 		$hMap = null;
 
-		$this->_request->attributes->add($this->_defaults);
+		//$this->_request->attributes->add($this->_defaults);
 		
 		foreach($this->_mappings as $mapping) {
 			if($mapping->match($this->_request)){
@@ -37,8 +42,10 @@ class Router {
 			}
 		}
 		
-		if($hMap)
+		if($hMap){
+			$this->_router = $hMap; 
 			$this->_request->attributes->add($hMap->getParams());
+		}
 	}
 	
 	public function addMapping($name, MappingAbstract $map){
@@ -81,5 +88,12 @@ class Router {
 	
 	public function setActionDefault($name) {
 		$this->_defaults["action"] = strtolower($name);
+	}
+	
+	/**
+	 * @return MappingAbstract
+	 */
+	public function getMapped() {
+		return $this->_router;	
 	}
 }

@@ -37,6 +37,7 @@ abstract class AbstractController {
 	public function __construct(Request $request, Response $response) {
 		$this->request = $request;
 		$this->response = $response;
+		$this->executeInjectionDependence();
 		$this->init();
 	}
 	
@@ -47,6 +48,12 @@ abstract class AbstractController {
 	
 	public function dispatch($action) {
 		$this->preDispatch();
+		
+		if(preg_match("#-#", $action)){
+			$action = preg_replace_callback("#-(.)#", function($matche){
+				return ucfirst($matche[1]);
+			}, $action);
+		}
 		
 		if(!method_exists($this, $action))
 			throw new ActionNotFoundException(sprintf("Não foi possível encontrar a ação <strong>%s</strong> no controller: <strong>%s</strong>", $action, get_class($this)));
@@ -96,5 +103,40 @@ abstract class AbstractController {
 	
 	public function setResponse(Response $response) {
 		$this->response = $response;
+	}
+	
+	public function executeInjectionDependence() {
+		
+		$args = array_merge($this->request->query->all(), $this->request->request->all());
+		$this->dependenceArgsClass($args);
+		
+	}
+	
+	private function dependenceArgsClass($args, $ref = null) {
+		$clazz = $ref != null ? $ref : $this;
+		
+		foreach($args as $key => $value) {
+			$nameMethod = 'set' . ucfirst($key);			
+			
+			if(!method_exists($clazz, $nameMethod))
+				continue;
+			
+			$refMethod = new \ReflectionMethod($clazz, $nameMethod);
+			
+			if(is_array($value)){
+				
+				foreach($refMethod->getParameters() as $methodParam)					
+					if($methodParam->getClass()!=null){					
+						$refNew = $methodParam->getClass()->newInstanceWithoutConstructor();
+						$clazz->$nameMethod($this->dependenceArgsClass($value, $refNew));						
+					}else{
+						$clazz->$nameMethod($value);
+					}
+			}else{
+				$clazz->$nameMethod($value);
+			}
+		}
+		
+		return $clazz;
 	}
 }
