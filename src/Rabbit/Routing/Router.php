@@ -1,7 +1,8 @@
 <?php
 namespace Rabbit\Routing;
 
-use Rabbit\Routing\Mapping\MappingAbstract;
+use Rabbit\Routing\Mapping\RouterMappingAbstract;
+
 use Symfony\Component\HttpFoundation\Request;
 
 class Router {
@@ -10,7 +11,7 @@ class Router {
 	
 	// definção dos defaults
 	private $_defaults = array(
-		"module"		=> "default",
+		"module"		=> "application",
 		"namespace"		=> "main",
 		"controller"	=> "index",
 		"action"		=> "index",
@@ -48,7 +49,7 @@ class Router {
 		}
 	}
 	
-	public function addMapping($name, MappingAbstract $map){
+	public function addMapping($name, RouterMappingAbstract $map){
 		$this->_mappings[$name] = $map;
 	}
 	
@@ -91,7 +92,7 @@ class Router {
 	}
 	
 	/**
-	 * @return MappingAbstract
+	 * @return RouterMappingAbstract
 	 */
 	public function getMapped() {
 		return $this->_router;	

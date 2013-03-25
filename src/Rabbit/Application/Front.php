@@ -165,7 +165,7 @@ class Front {
 	public function addRouters(array $routers) {
 		foreach ($routers as $name => $params){
 			if(!isset($params['type'])){
-				$clsName = 'Rabbit\Routing\Mapping\RegexMap';
+				$clsName = 'Rabbit\Routing\Mapping\Literal';
 			}else{
 				$clsName = $params['type'];
 			}
@@ -213,8 +213,7 @@ class Front {
 	public function run() {
 		$this->_log->log("Iniciando Front", LoggerType::get("RABBIT"));
 		$self = self::getInstance();
-		$this->_router->execute();
-		$this->initPlugin();
+		$this->_router->execute();		
 		$self->dispatch();
 		$this->_log->log("Finalizando Front", LoggerType::get("RABBIT"));
 	}
@@ -229,7 +228,15 @@ class Front {
 		$action 	= $this->_request->get("action") . "Action";
 		
 		$clsName = $module . "\\" . $namespace . "\Controller\\" . $controller;
+		
+		if(!file_exists(RABBIT_PATH_MODULE . DS . $clsName . '.php')){
+			throw new ApplicationException(sprintf("Não foi possível encontrar o Controller: <strong>%s</strong>", $clsName));
+		}else if($this->_router->getMapped() == null) {
+			throw new ApplicationException(sprintf("Roteamento não encontrado"), 404);
+		}
+		
 		$clsI = new $clsName($this->_request, $this->_response);
+		$this->initPlugin();		
 		$clsI->dispatch($action);
 		
 		$this->_response->send();
