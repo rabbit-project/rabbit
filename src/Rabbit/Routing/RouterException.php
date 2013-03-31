@@ -1,8 +1,6 @@
 <?php
 namespace Rabbit\Routing;
 
-use Rabbit\Exception;
-
-class RouterException extends Exception {
+class RouterException extends \Exception {
 	
 }

@@ -1,16 +1,19 @@
 <?php
 namespace Rabbit\View\Renderer;
 
+use Rabbit\View\Exception\ViewException;
+
 class JsonRender implements RenderInterface {
-	
-	private $data;
-	
-	public function __construct($data) {
-		$this->data = $data;
+
+	private $_config;
+
+	public function __construct($config) {
+		$this->_config = $config;
 	}
-	
+
 	public function render() {
-		return json_encode($this->data);
+		if(isset($this->_config['args']))
+			return json_encode($this->_config['args']);
 	}
 	
 }

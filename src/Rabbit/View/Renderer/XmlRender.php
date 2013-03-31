@@ -3,13 +3,15 @@ namespace Rabbit\View\Renderer;
 
 class XmlRender implements RenderInterface {
 	
-	private $data;
+	private $_config;
 	private $_simpleXml;
 	
-	public function __construct($data) {
-		$this->data = $data;
-		$this->_simpleXml = new \SimpleXMLElement("<root />");
-		$this->parserDataForXml($data["params"]);
+	public function __construct($config) {
+		$this->_config = $config;
+		if(isset($config["args"])){
+			$this->_simpleXml = new \SimpleXMLElement("<root />");
+			$this->parserDataForXml($config["args"]);
+		}
 	}
 	public function render() {
 		return $this->_simpleXml->asXML();
@@ -17,9 +19,6 @@ class XmlRender implements RenderInterface {
 	
 	private function parserDataForXml($data, $xml = null, $keyT=null) {
 		$xml = ($xml!==null)? $xml : $this->_simpleXml;
-		
-		/*if($keyT!==null)
-			$xml = $xml->addChild($keyT);*/
 			
 		foreach($data as $key => $value){
 			if(is_array($value)){

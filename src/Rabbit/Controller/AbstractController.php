@@ -60,22 +60,13 @@ abstract class AbstractController {
 			
 		$view = $this->$action();
 		
-		if($this->renderer){
+		if($view instanceof View\Renderer\RenderInterface && $this->renderer){
 			// se não for definido uma view no retorno é definido um padrão
-			if(!$view)
-				$view = new View();
-			
-			$view->setRequest($this->getRequest());
-			
-			$md = $this->getRequest()->get("module");
-			$ns = $this->getRequest()->get("namespace");
-			$cr = $this->getRequest()->get("controller");
-			$ac = $this->getRequest()->get("action");
-			
-			$fileURI =  RABBIT_PATH_MODULE . DS . ucfirst($md) . DS .'view' . DS . $ns . DS . $cr . DS . $ac ."." . $this->_prefix;
+			/*if(!$view)
+				$view = new View();*/
 			
 			$content = $this->getResponse()->getContent();
-			$content .= $view->render($fileURI);
+			$content .= $view->render();
 			$this->getResponse()->setContent($content);
 			$this->getResponse()->prepare($this->getRequest());
 		}

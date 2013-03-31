@@ -2,54 +2,39 @@
 
 namespace Rabbit\View;
 
+use Rabbit\Application\Front;
+use Rabbit\View\Exception\ViewAcceptNotAvailableException;
+use Rabbit\View\ViewRenderFactory;
 use Symfony\Component\HttpFoundation\Request;
 
-use Rabbit\View\ViewFileNotFoundException;
-use Rabbit\View\ViewInterface;
+/**
+ * Class View
+ * @package Rabbit\View
+ * @see http://guides.rubyonrails.org/layouts_and_rendering.html
+ */
+class View {
 
-class View implements ViewInterface{
-	
-	protected $request;
-	
-	private $_acceptDefault = "html";
-	
-	private $datas;
-	private $_config = array();
-	
-	public function __construct($datas = null, array $config = array()){
-		$this->datas = $datas;
-		if(is_array($datas) || is_object($datas))
-			$this->registerDatasForView($datas);
-		$this->_config = $config;
-	}
-	
-	public function registerDatasForView($datas) {
-		foreach($datas as $key => $value)
-			$this->$key = $value;
-	}
-	
-	public function setRequest(Request $request) {
-		$this->request = $request;
-	}
-	
-	/**
-	 * @return Request
-	 */
-	public function getRequest() {
-		return $this->request;
-	}
-	
-	public function render($fileURI) {
-		
-		if(!file_exists($fileURI))
-			throw new ViewFileNotFoundException(sprintf("Não foi possível localizar o arquivo <strong>%s</strong>", $fileURI));
-		
-		ob_start();
-		include $fileURI;
-		return ob_get_clean();
-	}
-	
-	public function __call($name, $params) {
-		//echo $name;
-	}
+    public static function render($args = NULL, array $config = array()) {
+
+        $request = Front::getInstance()->getRequest();
+
+		$formatDefault = isset($config['formatDefault'])? $config['formatDefault'] : 'html';
+
+		$type = $request->isXmlHttpRequest()? 'json' : $request->getRequestFormat(strtolower($formatDefault));
+
+		if(isset($config['accepts']) && !in_array($type, $config['accepts']) || !isset($config['accepts']) && $type != 'html')
+			throw new ViewAcceptNotAvailableException(sprintf("O Accept <strong>%s</strong> solicitado não está ativo", $type));
+
+		$config['args'] = $args;
+
+		return ViewRenderFactory::getRender(ViewRenderType::get(strtoupper($type)), $config);
+    }
+
+    public static function redirectTo(array $config) {
+        $config["module"];
+        $config["namespace"];
+        $config["controller"];
+        $config["action"];
+    }
+
 }

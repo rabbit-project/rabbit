@@ -34,13 +34,12 @@ class Router {
 	public function execute() {
 		$hMap = null;
 
-		//$this->_request->attributes->add($this->_defaults);
+		$this->_request->attributes->add($this->_defaults);
 		
 		foreach($this->_mappings as $mapping) {
-			if($mapping->match($this->_request)){
-				if(!$hMap || ($hMap && ($hMap->getHierarchy() < $mapping->getHierarchy())))
+			if($mapping->match($this->_request)===true)				
+				if($hMap == null || ($hMap != null && ($hMap->getHierarchy() < $mapping->getHierarchy())))
 					$hMap = $mapping;
-			}
 		}
 		
 		if($hMap){

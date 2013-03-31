@@ -1,9 +1,9 @@
 <?php
 namespace Rabbit\View\Renderer;
 
+use Symfony\Component\HttpFoundation\Request;
+
 interface RenderInterface {
-	
-	public function __construct($data);
 	
 	public function render();
 	

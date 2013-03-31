@@ -171,12 +171,12 @@ class Front {
 			}
 			
 			$defaults = isset($params['defaults'])? $params['defaults'] : array();
-			$requirements = isset($params['requirements'])? $params['requirements'] : array();
+			$options = isset($params['options'])? $params['options'] : array();
 			
 			if(!isset($params['url']))
 				throw new RouterException('Não foi definido o parametro "url" de mapeamento');
 			
-			$this->getRouter()->addMapping($name, new $clsName($params['url'], $defaults, $requirements));
+			$this->getRouter()->addMapping($name, new $clsName($params['url'], $defaults, $options));
 		}
 	}
 	
@@ -261,4 +261,38 @@ class Front {
 	public function getPlugins() {
 		return $this->_plugins;
 	}
+
+    /**
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     */
+    public function setRequest($request)
+    {
+        $this->_request = $request;
+    }
+
+    /**
+     * @return \Symfony\Component\HttpFoundation\Request
+     */
+    public function getRequest()
+    {
+        return $this->_request;
+    }
+
+    /**
+     * @param \Symfony\Component\HttpFoundation\Response $response
+     */
+    public function setResponse($response)
+    {
+        $this->_response = $response;
+    }
+
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function getResponse()
+    {
+        return $this->_response;
+    }
+
+
 }

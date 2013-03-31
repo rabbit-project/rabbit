@@ -11,13 +11,15 @@ abstract class Enum {
    
 	private $_name;
 	private $_value;
-	
+
 	/**
+	 * @param $name
 	 * @return self
+	 * @throws Exception\EnumException
 	 */
 	public static function get($name) {
 		if(!self::isExists($name))
-			throw new EnumException(sprintf("A constante %s não foi encontrada no ENUM %s", $name, get_called_class()));
+			throw new EnumException(sprintf("A constante %s não foi encontrada no ENUMType %s", $name, get_called_class()));
 		
 		$value = constant('static::' . $name);
 		return new static($name, $value);
@@ -26,7 +28,8 @@ abstract class Enum {
 	/**
 	 * Retorna o nome da constant através do seu valor
 	 * @param mixed $value
-	 */
+     * @return int|null|string
+     */
 	public static function getNameForValue($value) {
 		$ref = new \ReflectionClass(get_called_class());
 		$constans = $ref->getConstants();
@@ -34,9 +37,9 @@ abstract class Enum {
 		if(!$constans)
 			return null;
 		
-		foreach($constans as $consN => $consV){
-			if($consV == $value)
-				return $consN;				
+		foreach($constans as $consName => $consValue){
+			if($consValue == $value)
+				return $consName;
 		}
 		
 		return null;
@@ -46,6 +49,7 @@ abstract class Enum {
 		$this->_name = $name;
 		$this->_value = $value;
 	}
+
 	final private function __clone(){ }
 	
 	/**
@@ -80,5 +84,12 @@ abstract class Enum {
 	public function equals(self $obj) {
 		return $this == $obj;
 	}
-	
+
+    /**
+     * Retorna a constante selecionado
+     * @return string
+     */
+    public function __toString() {
+		return $this->_name;
+	}
 }
