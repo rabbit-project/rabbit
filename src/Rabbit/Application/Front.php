@@ -223,11 +223,11 @@ class Front {
 	 */
 	public function dispatch(){
 		$module 	= ucfirst($this->_request->get("module"));
-		$namespace 	= ucfirst($this->_request->get("namespace"));
+		$namespace 	= 'Namespaces\\' . ucfirst($this->_request->get("namespace"));
 		$controller = ucfirst($this->_request->get("controller")) . "Controller";
 		$action 	= $this->_request->get("action") . "Action";
 		
-		$clsName = $module . "\\" . $namespace . "\Controller\\" . $controller;
+		$clsName = $module . '\\' . $namespace . '\Controller\\' . $controller;
 		
 		if(!file_exists(RABBIT_PATH_MODULE . DS . $clsName . '.php')){
 			throw new ApplicationException(sprintf("Não foi possível encontrar o Controller: <strong>%s</strong>", $clsName));

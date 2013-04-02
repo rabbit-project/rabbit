@@ -1,7 +1,7 @@
 <?php
 namespace Rabbit\View;
 
-use Rabbit\View\Exception\ViewException;
+use Rabbit\View\Exception\ViewRenderException;
 use Rabbit\View\Renderer\HtmlRender;
 use Rabbit\View\Renderer\JsonRender;
 use Rabbit\View\Renderer\RenderInterface;
@@ -15,7 +15,7 @@ class ViewRenderFactory {
 	 * @param array          $config
 	 *
 	 * @return RenderInterface
-	 * @throws Exception\ViewException
+	 * @throws Exception\ViewRenderException
 	 */
 	public static function getRender(ViewRenderType $type, array $config = array()) {
         switch ($type){
@@ -29,7 +29,7 @@ class ViewRenderFactory {
 				return new XmlRender($config);
 				break;
 			default:
-				throw new ViewException(sprintf('Não há implementação de renderização para <strong>%s</strong>', $type));
+				throw new ViewRenderException(sprintf('Não há implementação de renderização para <strong>%s</strong>', $type));
 				break;
         }
     }

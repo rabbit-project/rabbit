@@ -1,10 +1,8 @@
 <?php
 namespace Rabbit\View\Helper;
 
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 
 abstract class HelperAbstract {
 	
@@ -17,6 +15,7 @@ abstract class HelperAbstract {
 	public function __construct(Request $request, Response $response) {
 		$this->setRequest($request);
 		$this->setResponse($response);
+		$this->init();
 	}	
 	
 	/**
@@ -25,7 +24,7 @@ abstract class HelperAbstract {
 	public function getRequest() {
 		return $this->_request;
 	}
-	
+
 	/**
 	 * @param Request $request
 	 */
@@ -43,4 +42,6 @@ abstract class HelperAbstract {
 	public function setResponse(Response $response) {
 		$this->_response = $response;
 	}
+
+	public function init() {}
 }

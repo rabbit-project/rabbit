@@ -34,7 +34,7 @@ class Regex extends RouterMappingAbstract{
 		if(!$request->getBasePath())
 			$url = preg_replace("#^/|" . implode("|",explode("/", $request->getScriptName())) . "#", "", $url);
 		
-		$result = preg_match("#" . str_replace("#", "\#", $this->_regex) . "#", $url, $matches);
+		$result = preg_match('#' . str_replace('#', '\#', $this->_regex) . '#', $url, $matches);
 		
 		if($result){
 			

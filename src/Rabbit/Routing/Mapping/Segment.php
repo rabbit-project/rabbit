@@ -34,15 +34,15 @@ class Segment extends RouterMappingAbstract{
 			$url = preg_replace("#^/|" . implode("|",explode("/", $request->getScriptName())) . "#", "", $url);
 		
 		// Pega todos os parametros
-		preg_match_all("#:([[:alnum:]\w]+)#i", $this->_url, $matchesLocal);
+		preg_match_all('#:([[:alnum:]\w]+)#i', $this->_url, $matchesLocal);
 		
 		// monta a expressão regular para fazer o match na URL
 		$regex = str_replace(
-			"\*",
-			"(?<args>.*)",
+			'\*',
+			'(?<args>.*)',
 			preg_replace(
-				"#\\\:([[:alnum:]\w]+)?#", "([^/]+)", 
-				str_replace(array("\[","\]"), array("(?:",")?"),
+				'#\\\:([[:alnum:]\w]+)?#i', '([^/]+)',
+				str_replace(array('\[','\]'), array('(?:',')?'),
 					 preg_quote($this->_url)
 				)
 			)

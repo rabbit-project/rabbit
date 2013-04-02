@@ -2,6 +2,8 @@
 namespace Rabbit\View\Renderer;
 
 use Rabbit\Application\Front;
+use Rabbit\View\Exception\ViewRenderException;
+use Rabbit\View\View;
 use Symfony\Component\HttpFoundation\Request;
 
 class HtmlRender implements RenderInterface {
@@ -37,13 +39,12 @@ class HtmlRender implements RenderInterface {
 
 		$fileURI = RABBIT_PATH_MODULE . DS . ucfirst($module) . DS . 'view' . DS .  $namespace . DS . $controller . DS . $action . '.' .$prefix;
 
-		if(file_exists($fileURI)){
-			ob_start();
-			require_once $fileURI;
-			return  ob_get_clean();
-		}
+		if(!file_exists($fileURI))
+			throw new ViewRenderException(sprintf('Arquivo não encontrado <strong>%s</strong>', $fileURI));
 
-		return null;
+		ob_start();
+		require_once $fileURI;
+		return  ob_get_clean();
 	}
 
 	public function get($key, $default = NULL) {
@@ -51,7 +52,8 @@ class HtmlRender implements RenderInterface {
 	}
 
 	public function __call($name, $args){
-
+		if($result = View::getHelper($name, $args))
+			return $result;
 	}
 
 }
