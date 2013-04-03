@@ -2,9 +2,9 @@
 
 namespace Rabbit\Event;
 
+use Rabbit\Event\Exception\EventException;
+
 abstract class EventManager {
-	
-	private static $_instance;
 	
 	private static $_events = array();
 	
@@ -17,7 +17,9 @@ abstract class EventManager {
 				$returns[] = call_user_func_array($event, $obj);
 	}
 	
-	public static function registerListener($eventName, callable $fn) {
+	public static function registerListener($eventName, $fn) {
+		if(!is_callable($fn))
+			throw new EventException('O argumento 2 passado pelo EventManager::registerListener deve ser um tipo Callable');
 		self::$_events[$eventName][] = $fn;
 	}
 	

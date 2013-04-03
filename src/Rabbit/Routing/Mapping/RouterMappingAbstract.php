@@ -14,6 +14,8 @@ abstract class RouterMappingAbstract {
 	 * @var array
 	 */
 	protected $_params = array();
+
+	protected $_urlMap = '';
 	
 	public function getHierarchy(){
 		return $this->_hierarchy;
@@ -31,8 +33,16 @@ abstract class RouterMappingAbstract {
 		$this->_params[$key] = $value;
 	}
 	
-	public function getParam($key, $default = null){
+	public function getParam($key, $default = NULL){
 		return (isset($this->_params[$key]))? $this->_params[$key] : $default;
+	}
+
+	public function setUrlMap($urlMap) {
+		$this->_urlMap = $urlMap;
+	}
+
+	public function getUrlMap() {
+		return $this->_urlMap;
 	}
 	
 }

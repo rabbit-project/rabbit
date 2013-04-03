@@ -11,12 +11,11 @@ use Symfony\Component\HttpFoundation\Request;
  * @author Erick Leao <erickleao@rabbitcms.com.br>
  */
 class Literal extends RouterMappingAbstract{
-	
-	private $_url;
+
 	private $_options;
 	
 	public function __construct($url, array $defautls = array(), array $options = array()){
-		$this->_url = $url;
+		$this->_urlMap = $url;
 		$this->_options = $options;
 		$this->_params = array_merge($this->_params, $defautls);
 	}
@@ -34,7 +33,7 @@ class Literal extends RouterMappingAbstract{
 		if(!$request->getBasePath())
 			$url = preg_replace("#^/|" . implode("|",explode("/", $request->getScriptName())) . "#", "", $url);
 		
-		return $this->_url == $url;
+		return $this->_urlMap == $url;
 	}
 	
 }

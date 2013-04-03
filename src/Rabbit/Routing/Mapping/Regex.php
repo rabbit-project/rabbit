@@ -11,12 +11,11 @@ use Symfony\Component\HttpFoundation\Request;
  * @author Erick Leao <erickleao@rabbitcms.com.br>
  */
 class Regex extends RouterMappingAbstract{
-	
-	private $_regex;
+
 	private $_options = array();
 	
 	public function __construct($regex, array $defautls = array(), array $options = array()){
-		$this->_regex = $regex;
+		$this->_urlMap = $regex;
 		$this->_options = $options;
 		$this->_params = array_merge($this->_params, $defautls);
 	}
@@ -34,9 +33,9 @@ class Regex extends RouterMappingAbstract{
 		if(!$request->getBasePath())
 			$url = preg_replace("#^/|" . implode("|",explode("/", $request->getScriptName())) . "#", "", $url);
 		
-		$result = preg_match('#' . str_replace('#', '\#', $this->_regex) . '#', $url, $matches);
+		$result = preg_match('#' . str_replace('#', '\#', $this->_urlMap) . '#', $url, $matches);
 		
-		if($result){
+		if($result == true){
 			
 			$this->_hierarchy = strlen($matches[0]);
 			unset($matches[0]);
@@ -52,7 +51,7 @@ class Regex extends RouterMappingAbstract{
 			$this->_params = array_merge($this->_params, $matches);
 		}
 
-		return $result;
+		return $result == 1;
 	}
 	
 }

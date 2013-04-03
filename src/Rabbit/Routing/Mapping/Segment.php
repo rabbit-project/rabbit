@@ -11,12 +11,11 @@ use Symfony\Component\HttpFoundation\Request;
  * @author Erick Leao <erickleao@rabbitcms.com.br>
  */
 class Segment extends RouterMappingAbstract{
-	
-	private $_url;
+
 	private $_options;
 	
 	public function __construct($url, array $defautls = array(), array $options = array()){
-		$this->_url = $url;
+		$this->_urlMap = $url;
 		$this->_options = $options;
 		$this->_params = array_merge($this->_params, $defautls);
 	}
@@ -34,7 +33,7 @@ class Segment extends RouterMappingAbstract{
 			$url = preg_replace("#^/|" . implode("|",explode("/", $request->getScriptName())) . "#", "", $url);
 		
 		// Pega todos os parametros
-		preg_match_all('#:([[:alnum:]\w]+)#i', $this->_url, $matchesLocal);
+		preg_match_all('#:([[:alnum:]\w]+)#i', $this->_urlMap, $matchesLocal);
 		
 		// monta a expressão regular para fazer o match na URL
 		$regex = str_replace(
@@ -43,7 +42,7 @@ class Segment extends RouterMappingAbstract{
 			preg_replace(
 				'#\\\:([[:alnum:]\w]+)?#i', '([^/]+)',
 				str_replace(array('\[','\]'), array('(?:',')?'),
-					 preg_quote($this->_url)
+					 preg_quote($this->_urlMap)
 				)
 			)
 		);

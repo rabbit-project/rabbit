@@ -228,8 +228,8 @@ class Front {
 		$action 	= $this->_request->get("action") . "Action";
 		
 		$clsName = $module . '\\' . $namespace . '\Controller\\' . $controller;
-		
-		if(!file_exists(RABBIT_PATH_MODULE . DS . $clsName . '.php')){
+
+		if(!file_exists(str_replace('\\', DS, RABBIT_PATH_MODULE . DS . $clsName . '.php'))){
 			throw new ApplicationException(sprintf("Não foi possível encontrar o Controller: <strong>%s</strong>", $clsName));
 		}else if($this->_router->getMapped() == null) {
 			throw new ApplicationException(sprintf("Roteamento não encontrado"), 404);

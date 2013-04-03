@@ -43,7 +43,7 @@ class View {
         $config["action"];
     }
 
-	public static function registerHelper($namespace) {
+	public static function registerHelperNamespace($namespace) {
 		self::$_helpersMap[] = $namespace;
 	}
 
