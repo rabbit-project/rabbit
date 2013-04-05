@@ -10,9 +10,7 @@
 <a name="introduction"></a>
 ## Introdução
 
-Routers é um mecanismo para interpresar as requisições HTTP que são gerados. Com o Router você pode basicamente mapear e direcionar para o código
-a onde a quela requisição deve ser levada e oque é argumento ou não
-
+Routers é um mecanismo para interpretar as requisições HTTP que são gerados. Com o Router você pode basicamente mapear e direcionar para o código a onde a quela requisição deve ser levada e oque é argumento ou não
 
 <a name="config"></a>
 ## Configuração
@@ -94,7 +92,7 @@ Podemos definir um Router através do arquivo `router.yml` dentro da pasta do m�
 	
 	/root
 	  application
-	    modules
+	    Modules
 	      Application
 	        router.yml
 
@@ -138,10 +136,49 @@ Modulox\Namespacey\Nomez:
 <a name="types"></a>
 ## Tipos
 
-Hoje no Routers do Rabbit temos 3 tipos de Routers Literal, Segment e Regex
+Rabbit temos 3 tipos de Routers Literal, Segment e Regex cada 1 tem um peso sobre o outro em termos de peso temos:
+
+<table>
+	<tr>
+		<th>#</th>
+		<th>Tipo</th>
+		<th>Força</th>
+	</tr>
+	<tr>
+		<td>1</td>
+		<td>Literal</td>
+		<td>Forte</td>
+	</tr>
+	<tr>
+		<td>2</td>
+		<td>Segment</td>
+		<td>Medio</td>
+	</tr>
+	<tr>
+		<td>3</td>
+		<td>Regex</td>
+		<td>Fraco</td>
+	</tr>
+</table>
+
+Assim sendo: Mapeamento do tipo Literal sobrepoem as de Segment e a de Segment as de Regex.
 
 <a name="literal"></a>
 ### Literal
 
-O Roteramento do tipo `Literal` é basicamente conforme sua tradução "ao pé da letra", então basicamente você irá informa
+O Roteramento do tipo `Literal` é basicamente conforme sua tradução "ao pé da letra", ele só irá fazer a combinção com o roteamento se a requisião for exatamente o que você solicitou.
+
+
+Ex:
+
+	REQUEST site.com.br/usuarios
+
+RouterMap:
+	
+```yaml
+Modulox\Namespacey\Usuarios:
+ map: '/usuarios'
+ defaults:
+  controller: 'usuario'
+```
 
