@@ -173,10 +173,10 @@ class Front {
 			$defaults = isset($params['defaults'])? $params['defaults'] : array();
 			$options = isset($params['options'])? $params['options'] : array();
 			
-			if(!isset($params['url']))
-				throw new RouterException('Não foi definido o parametro "url" de mapeamento');
+			if(!isset($params['map']))
+				throw new RouterException('Não foi definido o parametro "map" de mapeamento');
 			
-			$this->getRouter()->addMapping($name, new $clsName($params['url'], $defaults, $options));
+			$this->getRouter()->addMapping($name, new $clsName($params['map'], $defaults, $options));
 		}
 	}
 	
