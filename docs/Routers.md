@@ -219,7 +219,7 @@ Os mapeamentos do tipo `Segment` possuem algumas opções como segue abaixo
 		<td>requirements</td>
 		<td>array</td>
 		<td>
-		Cria validações para as variáveis<br />
+		Cria validações para as variáveis baseando-se em expressão regular<br />
 		URL: site.com.br/noticia/:id		
 <pre>
 requirements:
