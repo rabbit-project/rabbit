@@ -15,7 +15,7 @@ Routers é um mecanismo para interpretar as requisições HTTP que são gerados.
 <a name="config"></a>
 ## Configuração
 
-A configuração de um roteamente é simples com os seguintes tendo em mente as seguintes propriedades:
+A configuração de um roteamente é simples tendo em mente as seguintes propriedades:
 
 <table>
 	<tr>
@@ -166,12 +166,15 @@ Assim sendo: Mapeamento do tipo Literal sobrepoem as de Segment e a de Segment a
 <a name="literal"></a>
 ### Literal
 
+ * type: Rabbit\Routing\Mapping\Literal
+
 O Roteramento do tipo `Literal` é basicamente conforme sua tradução "ao pé da letra", ele só irá fazer a combinção com o roteamento se a requisião for exatamente o que você solicitou.
 
 
-Ex:
+**Exemplo:**
 
-	REQUEST site.com.br/usuarios
+-------
+	REQUEST URL: site.com.br/usuarios
 
 RouterMap:
 	
@@ -180,5 +183,65 @@ Modulox\Namespacey\Usuarios:
  map: '/usuarios'
  defaults:
   controller: 'usuario'
+  action: list
 ```
+	
+Com isso ao fazer o request para a url informada o mesmo será combinado com o mapeamento e iria mandar o usuário para:
+	
+	module:          application
+	namespace:       main
+	controller:      usuario
+	action:          list
+	
+-------
 
+<a name="segment"></a>
+### Segment
+
+ * type: Rabbit\Routing\Mapping\Segment
+
+O Roteamento do tipo `Segment` a idéia é segmentar a URL através da barra ( **/** ).
+
+O interesante deste mapeamento é que podemos recuperar alguns segments atribuindo uma variável para o mesmo. As variáveis são definidos através de dois pontos ( **:** ) `:nome_var` assim no segmento que você informa uma variável o valor na quele segmento será setado para a variável.
+
+Os mesmos argumentos de comportamentos são permitidos como nome das variável e tornando assim as mesmas comportamentais.
+
+Os mapeamentos do tipo `Segment` possuem algumas opções como segue abaixo
+
+**Options**
+<table>
+	<tr>
+		<th>Opção</th>
+		<th>Tipo</th>
+		<th width="100%" align="left">Descrição</th>
+	</tr>
+	<tr>
+		<td>requirements</td>
+		<td>array</td>
+		<td>
+		Cria validações para as variáveis<br />
+		URL: site.com.br/noticia/:id		
+<pre>
+requirements:
+ id: '\d+'
+</pre>
+		</td>
+	</tr>
+</table>
+
+Os `Segment` permitem também o mapeamento de segmentos opcionais entre colchetes ( [ ... ] ) como o mapeamento:
+
+---------
+```yaml
+Application\Main\Segmentx:
+ type: 'Rabbit\Routing\Mapping\Segment'
+ map: '/artigos[/:categoria]'
+ defaults:
+  module: artigos
+  controller: categoria
+  action: list
+ options:
+  requirements:
+   categoria: '[[:alpha:]]'
+```
+---------
