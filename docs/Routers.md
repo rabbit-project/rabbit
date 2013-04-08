@@ -229,9 +229,14 @@ requirements:
 	</tr>
 </table>
 
-Os `Segment` permitem também o mapeamento de segmentos opcionais entre colchetes ( [ ... ] ) como o mapeamento:
+Os tipos `Segment` permitem que você possa criar segmentos opcionais entre colchetes ( [ ... ] ) como o exemplo abaixo:
+
+**Exemplo:**
 
 ---------
+	REQUEST URL: site.com.br/artigos
+	REQUEST URL: site.com.br/artigos/games
+
 ```yaml
 Application\Main\Segmentx:
  type: 'Rabbit\Routing\Mapping\Segment'
@@ -245,3 +250,74 @@ Application\Main\Segmentx:
    categoria: '[[:alpha:]]'
 ```
 ---------
+
+Os 2 requests que foram informados serão combinados com o mapeamento acima. Sendo que no primeiro request ele não irá está informando uma categoria fazendo assim a variável `categoria` será `NULL` e no segundo request será retornando o valor `games` para a variável `categoria`.
+
+### Options:
+
+__requeriments__
+
+A opção de `requeriments` ele serve para validar os valores de uma determinada variável mapeada na URL, para se criar uma validação é necessário que o mesmo seja uma __Expressão Regular__ pois assim você terá muita liberdade para criar N validações.
+
+Os `requeriments` recebem um array da seguinte padrão:
+
+	var_name: 'regex'
+	
+Onde `var_name` é o nome da variável criada na URL e `regex` é a expressão regular para validar o valor recebido da URL. Se o valor não bater com qualquer validão de qualquer variável o mapeamento não será combinado com a URL vamos utilizar o mesmo exemplo que utilizamos logo em cima:
+
+**Exemplo:**
+
+---------
+	REQUEST URL: site.com.br/artigos
+	REQUEST URL: site.com.br/artigos/games
+	REQUEST URL: site.com.br/artigos/1
+
+```yaml
+Application\Main\Segmentx:
+ type: 'Rabbit\Routing\Mapping\Segment'
+ map: '/artigos[/:categoria]'
+ defaults:
+  module: artigos
+  controller: categoria
+  action: list
+ options:
+  requirements:
+   categoria: '[[:alpha:]]'
+```
+---------
+
+Este mapeamento como vocês sabem os 2 primeiros requests irão combinar com o mapeamento agora o 3º request não devido ao fato dele não ser somente um `[[:alpha:]]` que em expressão regular tipo 'POSIX' que quer dizer que só aceitará somente texto no caso `[a-zA-Z]` em expressão regular mais simples.
+
+<a name="regex"></a>
+### Regex
+
+* type: Rabbit\Routing\Mapping\Regex
+
+Os tipos `Regex` são mapeamentos mais complexos onde você irá escrever um mapemanto baseado em uma expressão regular, se a expressão regular informada bater com o request o mesmo irá combinar.
+
+Apesar de serem mapeamentos do tipo Expressão Regular é possível informa no meio da expressão regular variáveis atravez do seguinte mapeamento `(?<nome_var>sua_expressão)` então o que vier depois de <> ele irá salvar em uma variável com o nome informado. 
+
+**Exemplo**
+
+---------
+	REQUEST URL: site.com.br/artigos/games/titulox-123.html
+
+```yaml
+Application\Main\Segmentx:
+ type: 'Rabbit\Routing\Mapping\Regex'
+ map: '/artigos/(?<categoria>[^/]+)/(?:<titulo>[^-]+)-(?:<id>[^-]+)\.(?:<_format>[[:alpha:]]+)'
+ defaults:
+  module: artigos
+  controller: categoria
+  action: view
+```
+---------
+
+Então o request informado ele irá fazer a combinação com o mapeamento e irá separar os valores atravéz das variáveis informada entre `(?<var_name>...)` tendo o seguinte:
+	
+	categoria: games
+	titulo: titulox
+	id: 123
+	_format: html
+	
+E lembrando também que as variáveis comportamentais também funcionam no mapeamento.
