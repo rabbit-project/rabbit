@@ -305,7 +305,7 @@ Apesar de serem mapeamentos do tipo Expressão Regular é possível informa no m
 ```yaml
 Application\Main\Segmentx:
  type: 'Rabbit\Routing\Mapping\Regex'
- map: '/artigos/(?<categoria>[^/]+)/(?:<titulo>[^-]+)-(?:<id>[^-]+)\.(?:<_format>[[:alpha:]]+)'
+ map: '/artigos/(?<categoria>[^/]+)/(?<titulo>[^-]+)-(?<id>[^-]+)\.(?<_format>[[:alpha:]]+)'
  defaults:
   module: artigos
   controller: categoria
