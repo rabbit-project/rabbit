@@ -295,6 +295,22 @@ Este mapeamento como vocês sabem os 2 primeiros requests irão combinar com o m
 
 Os tipos `Regex` são mapeamentos mais complexos onde você irá escrever um mapemanto baseado em uma expressão regular, se a expressão regular informada bater com o request o mesmo irá combinar.
 
+Os mapeamentos do tipo `Segment` possuem algumas opções como segue abaixo
+
+**Options**
+<table>
+	<tr>
+		<th>Opção</th>
+		<th>Tipo</th>
+		<th width="100%" align="left">Descrição</th>
+	</tr>
+	<tr>
+		<td>matches_ref</td>
+		<td>array</td>
+		<td>Associa para uma var o grupo de captura "()"</td>
+	</tr>
+</table>
+
 Apesar de serem mapeamentos do tipo Expressão Regular é possível informa no meio da expressão regular variáveis atravez do seguinte mapeamento `(?<nome_var>sua_expressão)` então o que vier depois de <> ele irá salvar em uma variável com o nome informado. 
 
 **Exemplo**
@@ -321,3 +337,37 @@ Então o request informado ele irá fazer a combinação com o mapeamento e irá
 	_format: html
 	
 E lembrando também que as variáveis comportamentais também funcionam no mapeamento.
+
+### Options:
+
+__matches_ref__
+
+A opção de `matches_ref` com ele você pode referênciar os valores encontrados pelos Grupo de Captura "( )"
+
+Os `matches_ref` recebem um array da seguinte padrão:
+
+	var_name: indexGrupo
+
+**Exemplo**
+
+---------
+	REQUEST URL: site.com.br/artigos/games/titulox-123.html
+
+```yaml
+Application\Main\Segmentx:
+ type: 'Rabbit\Routing\Mapping\Regex'
+ map: '/artigos/([^/]+)/([^-]+)-([^\.]+)\.([[:alpha:]]+)'
+ defaults:
+  module: artigos
+  controller: categoria
+  action: view
+ options:
+  matches_ref:
+   categoria: 1
+   titulo: 2
+   id: 3
+   _format: 4
+```
+---------
+
+Assim vc consegue recuperar os valores dos Grupo de Captura e atribuir o mesmo a uma variável.
