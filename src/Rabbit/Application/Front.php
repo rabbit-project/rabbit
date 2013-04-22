@@ -115,14 +115,14 @@ class Front {
 	 */
 	private function mappingModules() {
 		$dirModules = new DirectoryIterator(RABBIT_PATH_MODULE);
-		$load = ServiceLocator::getService("Rabbit\Load");
+		$load = ServiceLocator::getService('Rabbit\Load');
 		foreach($dirModules as $dirModule){
 			if($dirModule->isDir() && !$dirModule->isDot()){
 				// registrando namespace
 				$load->add($dirModule->getFilename(), RABBIT_PATH_MODULE);
 				
 				// recuperando o Module.php
-				$clsModule =  $dirModule->getFilename() . "\Module";
+				$clsModule =  $dirModule->getFilename() . '\Module';
 				$clsI = new $clsModule();
 				
 				// verificar se o metodo de configuração existe
@@ -223,11 +223,11 @@ class Front {
 	 */
 	public function dispatch(){
 		$module 	= ucfirst($this->_request->get("module"));
-		$namespace 	= 'Namespaces\\' . ucfirst($this->_request->get("namespace"));
-		$controller = ucfirst($this->_request->get("controller")) . "Controller";
-		$action 	= $this->_request->get("action") . "Action";
+		$namespace 	= ucfirst($this->_request->get("namespace"));
+		$controller = ucfirst($this->_request->get("controller"));
+		$action 	= $this->_request->get("action");
 		
-		$clsName = $module . '\\' . $namespace . '\Controller\\' . $controller;
+		$clsName = sprintf('%s\Namespaces\%s\Controller\%sController', $module, $namespace, $controller);;
 
 		if(!file_exists(str_replace('\\', DS, RABBIT_PATH_MODULE . DS . $clsName . '.php'))){
 			throw new ApplicationException(sprintf("Não foi possível encontrar o Controller: <strong>%s</strong>", $clsName));

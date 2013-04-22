@@ -10,6 +10,7 @@ use Rabbit\Application;
 use Rabbit\View;
 use Rabbit\View\ViewInterface;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -55,18 +56,20 @@ abstract class AbstractController {
 			}, $action);
 		}
 
+		$action = $action . 'Action';
+
 		if(!method_exists($this, $action))
 			throw new ActionNotFoundException(sprintf("Não foi possível encontrar a ação <strong>%s</strong> no controller: <strong>%s</strong>", $action, get_class($this)));
 
-		$view = $this->$action();
+		$actionReturn = $this->$action();
 
-		if($view instanceof View\Renderer\RenderInterface && $this->renderer){
+		if($actionReturn instanceof View\View && $this->renderer){
 			// se não for definido uma view no retorno é definido um padrão
 			/*if(!$view)
 				$view = new View();*/
 
 			$content = $this->getResponse()->getContent();
-			$content .= $view->render();
+			$content .= $actionReturn->render();
 			$this->getResponse()->setContent($content);
 			$this->getResponse()->prepare($this->getRequest());
 		}
@@ -103,8 +106,8 @@ abstract class AbstractController {
 
 	}
 
-	private function dependenceArgsClass($args, $ref = null) {
-		$clazz = $ref != null ? $ref : $this;
+	private function dependenceArgsClass($args, $ref = NULL) {
+		$clazz = $ref != NULL ? $ref : $this;
 
 		foreach($args as $key => $value) {
 			$nameMethod = 'set' . ucfirst($key);
@@ -117,7 +120,7 @@ abstract class AbstractController {
 			if(is_array($value)){
 
 				foreach($refMethod->getParameters() as $methodParam)
-					if($methodParam->getClass()!=null){
+					if($methodParam->getClass()!=NULL){
 						$refNew = method_exists($methodParam->getClass(),'newInstanceWithoutConstructor')? $methodParam->getClass()->newInstanceWithoutConstructor() : $methodParam->getClass()->newInstanceArgs();
 						$clazz->$nameMethod($this->dependenceArgsClass($value, $refNew));
 					}else{
