@@ -49,10 +49,18 @@ class View {
 		return $this->_renderer->render();
 	}
 
+	/**
+	 * @param string $namespace
+	 */
 	public static function registerHelperNamespace($namespace) {
 		self::$_helpersMap[] = $namespace;
 	}
 
+	/**
+	 * @param string $helper
+	 *
+	 * @return mixed
+	 */
 	public static function getHelper($helper) {
 		$request = Front::getInstance()->getRequest();
 		$response = Front::getInstance()->getResponse();

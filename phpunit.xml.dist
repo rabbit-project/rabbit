@@ -1,16 +1,24 @@
 <phpunit backupGlobals="false"
-         backupStaticAttributes="false"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnFailure="false"
-         syntaxCheck="false"
-         bootstrap="./autoload.php.dist">
-    <testsuites>
-        <testsuite name="Rabbit CMS Test Suite">
-            <directory>./src/RabbitTest</directory>
-        </testsuite>
-    </testsuites>
+		 backupStaticAttributes="false"
+		 colors="true"
+		 convertErrorsToExceptions="true"
+		 convertNoticesToExceptions="true"
+		 convertWarningsToExceptions="true"
+		 processIsolation="false"
+		 stopOnFailure="false"
+		 syntaxCheck="false"
+		 verbose="true"
+		 bootstrap="./autoloadForPHPUnit.php">
+
+	<testsuites>
+		<testsuite name="Rabbit Framework Test Suite">
+			<directory>./src/RabbitTest/*</directory>
+		</testsuite>
+	</testsuites>
+
+	<logging>
+		<log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
+		<log type="testdox-text" target="php://stdout" />
+	</logging>
+
 </phpunit>
