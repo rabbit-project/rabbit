@@ -37,7 +37,7 @@ class AclTest extends \PHPUnit_Framework_TestCase{
 	 * @expectedException Rabbit\Acl\Exception\AclResourceNotFoundException
 	 */
 	public function testExpetedExceptionForResourceNotFound(){
-		AclManager::getResource("ResourceX");
+		AclManager::getResource("RecursoNaoExiste");
 	}
 
 	/**
