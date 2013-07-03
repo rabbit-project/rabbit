@@ -77,10 +77,10 @@ class AclTest extends \PHPUnit_Framework_TestCase{
 		$actor1 = new Actor('Ator1');
 		$actor2 = new Actor('Ator2', 'Ator2 é parente Ator1', array($actor1));
 
-		$actorCurrent = $actor2->getActorsParents()[0];
+		$actorCurrent = $actor2->getActorsParents();
 		$this->assertCount(1, $actor2->getActorsParents());
-		$this->assertInstanceOf('Rabbit\Acl\Actor', $actorCurrent);
-		$this->assertEquals('Ator1', $actorCurrent);
+		$this->assertInstanceOf('Rabbit\Acl\Actor', $actorCurrent[0]);
+		$this->assertEquals('Ator1', $actorCurrent[0]);
 	}
 
 	/**
