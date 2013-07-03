@@ -1,5 +1,5 @@
 <?php
-namespace Rabbit\Application;
+namespace Rabbit\Application\Exception;
 
 class ApplicationException extends \Exception {
 	

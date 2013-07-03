@@ -1,9 +1,7 @@
 <?php
 namespace Rabbit\Acl;
 
-
 use Rabbit\Acl\Exception\AclResourceExistException;
-use Rabbit\Acl\Exception\AclResourceNotExistException;
 use Rabbit\Acl\Exception\AclResourceNotFoundException;
 
 abstract class AclManager {
@@ -55,6 +53,10 @@ abstract class AclManager {
 			throw new AclResourceNotFoundException(sprintf('O recurso <strong>%s</strong> não foi encontrado', $name));
 
 		return self::$_resources[$name];
+	}
+
+	public static function hasGrant($actor, $action, $resource){
+		return AclManager::getResource($resource)->hasPermission($actor,$action);
 	}
 
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Rabbit\View;
+namespace Rabbit\View\Exception;
 
 class ViewFileNotFoundException extends \Exception {
 	

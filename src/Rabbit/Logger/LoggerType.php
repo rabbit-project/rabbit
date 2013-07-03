@@ -6,6 +6,7 @@ use Rabbit\Lang\Enum;
 /**
  * Classe Enum TYPE para Logger
  * @author Erick Leao <erickleao@rabbit-cms.com.br>
+ * @method static LoggerType get(string $name)
  */
 final class LoggerType extends Enum {
 	const RABBIT 	= 1;

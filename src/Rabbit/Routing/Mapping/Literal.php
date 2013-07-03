@@ -31,9 +31,9 @@ class Literal extends RouterMappingAbstract{
 		$url = trim(urldecode($request->getPathInfo()));
 		
 		if(!$request->getBasePath())
-			$url = preg_replace("#^/|" . implode("|",explode("/", $request->getScriptName())) . "#", "", $url);
+			$url = preg_replace('#^/|' . implode('|',explode('/', $request->getScriptName())) . '#', '', $url);
 		
-		return $this->_urlMap == $url;
+		return preg_match('#' . $url . '?#',$this->_urlMap) === 1;
 	}
 	
 }

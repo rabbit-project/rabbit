@@ -1,7 +1,11 @@
 <?php
 namespace Rabbit\Acl;
 
-
+/**
+ * Class Action
+ * Class responsavel por armazenar informação de Ação
+ * @package Rabbit\Acl
+ */
 class Action {
 
 	/**
@@ -30,4 +34,7 @@ class Action {
 		return $this->name;
 	}
 
+	public function __toString(){
+		return $this->getName();
+	}
 }

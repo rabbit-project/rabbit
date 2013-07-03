@@ -2,13 +2,11 @@
 
 namespace Rabbit\Application;
 
-use Rabbit\Logger\LoggerException;
-
-use Rabbit\Logger\LoggerType;
-
-use Rabbit\Logger\LoggerManager;
-
 use DirectoryIterator;
+use Rabbit\Application\Exception\ApplicationException;
+use Rabbit\Application\Exception\ApplicationFileNotFoundException;
+use Rabbit\Logger\LoggerManager;
+use Rabbit\Logger\LoggerType;
 use Rabbit\Routing\Router;
 use Rabbit\Routing\RouterException;
 use Rabbit\Service\ServiceLocator;
@@ -150,10 +148,10 @@ class Front {
 				
 				$routerFile = $dirModule->getPathname() . DS . 'router.yml';
 				if(!file_exists($routerFile))
-					throw new MvcFileNotFoundException(sprintf("Não foi possível encontrar o arquivo: <strong>%s</strong> de roteamento do módulo: <strong>%s</strong>",$routerFile, $dirModule->getPathname()));
+					throw new ApplicationFileNotFoundException(sprintf("Não foi possível encontrar o arquivo: <strong>%s</strong> de roteamento do módulo: <strong>%s</strong>",$routerFile, $dirModule->getPathname()));
 				
 				$router = Yaml::parse($routerFile);
-				$this->addRouters($router);
+				$this->addRouters($router,strtolower($dirModule->getFilename()));
 			}
 		}		
 	}
@@ -162,15 +160,15 @@ class Front {
 	 * @param array $routers
 	 * @throws RouterException
 	 */
-	public function addRouters(array $routers) {
+	public function addRouters(array $routers, $module = null) {
 		foreach ($routers as $name => $params){
 			if(!isset($params['type'])){
 				$clsName = 'Rabbit\Routing\Mapping\Literal';
 			}else{
 				$clsName = $params['type'];
 			}
-			
-			$defaults = isset($params['defaults'])? $params['defaults'] : array();
+
+			$defaults = isset($params['defaults'])? array('module'=>$module)+$params['defaults'] : array('module'=>$module);
 			$options = isset($params['options'])? $params['options'] : array();
 			
 			if(!isset($params['map']))

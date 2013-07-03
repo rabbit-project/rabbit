@@ -1,18 +1,13 @@
 <?php
 namespace Rabbit\Controller;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
-
-use Rabbit\ServiceLocator;
-
 use Rabbit\Application;
-
+use Rabbit\Controller\Exception\ActionNotFoundException;
+use Rabbit\ServiceLocator;
 use Rabbit\View;
 use Rabbit\View\ViewInterface;
-
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractController {
 
