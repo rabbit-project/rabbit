@@ -4,14 +4,15 @@
     "description": "O Rabbit é um conjunto de código baseado em PHP - Framework simples para controlar a arquitetura HMVC, utilizar como ORM Doctrine",
     "keywords": ["framework", "rabbit", "rabbitcms", "php", "fast"],
     "homepage": "https://github.com/rabbit-project",
-     "require-dev": {
+    "require-dev": {
         "phpunit/PHPUnit": "3.7.*"
     },
     "require": {
-    	"php": ">=5.3.3",
+    	"php": ">=5.3",
         "symfony/http-foundation": "v2.1.4",
-        "symfony/yaml": "v2.1.4",
-        "doctrine/common": ">2.2,<2.4-dev"
+        "doctrine/common": ">2.2,<2.4-dev",
+		"doctrine/orm": "2.*",
+        "symfony/yaml": "2.*"
     },
     "authors": [
         {
