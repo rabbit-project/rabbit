@@ -118,5 +118,19 @@ class AclTest extends \PHPUnit_Framework_TestCase{
 		$this->assertFalse($resource->hasPermission('Ator2', 'update'));
 	}
 
+	/**
+	 * Atribui todas as Ações disponível do Recurso para o Ator
+	 * @depends testAddingActionForResource
+	 */
+	public function testPermissionAllActionsForAActor() {
+		$resource = AclManager::getResource('ResourceX');
+		$actor = new Actor('administrator');
+		$resource->addGrantPermission($actor);
+		$this->assertTrue($resource->hasPermission('administrator', 'create'));
+		$this->assertTrue($resource->hasPermission('administrator', 'update'));
+		$this->assertTrue($resource->hasPermission('administrator', 'edit'));
+	}
+
+
 	public function testCompleted() { }
 }

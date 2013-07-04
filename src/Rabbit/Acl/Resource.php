@@ -73,12 +73,12 @@ class Resource {
 
 		$this->_actors[] = $actor;
 
-		if($actions===null)
+		if($actions===null || empty($actions))
 			$actions = $this->_actions;
 
 		foreach($actions as $action){
 			$act = $this->getAction($action);
-			$this->_grants[$action][] = $actor;
+			$this->_grants[(string)$action][] = $actor;
 		}
 
 		return $this;
@@ -102,7 +102,7 @@ class Resource {
 				return true;
 			}else if($actor->getActorsParents() != null){
 				foreach($actor->getActorsParents() as $actorParent){
-					if($this->hasPermission($actorParent->getName(), $action))
+					if($this->hasPermission($this->getActor((string)$actorParent), $action))
 						return true;
 				}
 			}

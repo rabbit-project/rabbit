@@ -1,27 +1,18 @@
 <?php
 namespace Rabbit\Annotation;
 
-class Annotation {
+abstract class Annotation {
 	
-	/**
-	 * @var \ReflectionClass
-	 */
-	private $_rc;
-	
-	public function __construct($cls) {
-		$this->_rc = new \ReflectionClass($cls);
+	public static function getAnnotationsClass($clazz) {
+
 	}
-	
-	public function getAnnotationsMethodName($name) {
-		$comment = $this->_rc->getMethod($name)->getDocComment();
-		return $this->getAnnotationComment($comment);
+
+	public static function getAnnotationsMethod($clazz, $methodName) {
+
 	}
-	
-	public function getAnnotationClass() {
-		
+
+	public static function getAnnotationsPropertie($clazz, $propertieName) {
+
 	}
-	
-	private function getAnnotationComment($comment){
-		echo $comment;
-	}
+
 }
