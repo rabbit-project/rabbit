@@ -9,7 +9,7 @@
     },
     "require": {
     	"php": ">=5.3",
-        "symfony/http-foundation": "2.*@dev"
+        "symfony/http-foundation": "2.*@dev",
 	"doctrine/orm": "2.*@dev",
         "symfony/yaml": "2.*@dev"
     },
