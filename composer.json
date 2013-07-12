@@ -9,10 +9,9 @@
     },
     "require": {
     	"php": ">=5.3",
-        "symfony/http-foundation": "v2.1.4",
-        "doctrine/common": ">2.2,<2.4-dev",
-		"doctrine/orm": "2.*",
-        "symfony/yaml": "2.*"
+        "symfony/http-foundation": "2.*@dev",
+	"doctrine/orm": "2.*@dev",
+        "symfony/yaml": "2.*@dev"
     },
     "authors": [
         {
