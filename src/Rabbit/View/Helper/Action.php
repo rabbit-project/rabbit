@@ -14,8 +14,12 @@ class Action extends HelperAbstract{
 		$action = (isset($args["action"])? $args["action"] : $this->_request->get('action'));
 
 		$mapSelf 	= sprintf('%s\Namespaces\%s\Controller\%sController::%s', $module, $namespace, $controller, $action);
-		$mapRequest = sprintf('%s\Namespaces\%s\Controller\%sController::%s', ucfirst($this->_request->get('module')),
-			ucfirst($this->_request->get('namespace')), ucfirst($this->_request->get('controller')), $this->_request->get('action'));
+		$mapRequest = sprintf('%s\Namespaces\%s\Controller\%sController::%s',
+			ucfirst($this->_request->get('module')),
+			ucfirst($this->_request->get('namespace')),
+			ucfirst($this->_request->get('controller')),
+			$this->_request->get('action')
+		);
 
 		if($mapSelf == $mapRequest)
 			throw new ViewHelperException(sprintf('O mapeamento do helper action não pode ser o mesmo escopo de sua execução - escopo: <strong>%s</strong>', $mapRequest));

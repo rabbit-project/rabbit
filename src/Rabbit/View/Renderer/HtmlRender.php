@@ -28,16 +28,7 @@ class HtmlRender implements RenderInterface {
 
 	public function render(){
 
-		$request = Front::getInstance()->getRequest();
-
-		$module 		= isset($this->_config['module'])?		$this->_config['module'] 		: $request->get("module");
-		$namespace 		= isset($this->_config['namespace'])? 	$this->_config['namespace'] 	: $request->get("namespace");
-		$controller 	= isset($this->_config['controller'])? 	$this->_config['controller'] 	: $request->get("controller");
-		$action 		= isset($this->_config['action'])?		$this->_config['action'] 		: $request->get("action");
-
-		$prefix = isset($this->_config['prefix'])?	$this->_config['prefix'] : 'phtml';
-
-		$fileURI = RABBIT_PATH_MODULE . DS . ucfirst($module) . DS . 'view' . DS .  $namespace . DS . $controller . DS . $action . '.' .$prefix;
+		$fileURI = $this->_config['uri-view'];
 
 		if(!file_exists($fileURI))
 			throw new ViewRenderException(sprintf('Arquivo não encontrado <strong>%s</strong>', $fileURI));

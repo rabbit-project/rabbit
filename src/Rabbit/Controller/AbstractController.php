@@ -3,6 +3,7 @@ namespace Rabbit\Controller;
 
 use Rabbit\Application;
 use Rabbit\Controller\Exception\ActionNotFoundException;
+use Rabbit\Layout\Layout;
 use Rabbit\ServiceLocator;
 use Rabbit\View;
 use Rabbit\View\ViewInterface;
@@ -26,6 +27,13 @@ abstract class AbstractController {
 	protected $_prefix = "phtml";
 
 	/**
+	 * @var Layout
+	 */
+	protected $layout;
+
+	protected $renderLayout = true;
+
+	/**
 	 * @var ViewInterface
 	 */
 	protected $view;
@@ -34,10 +42,15 @@ abstract class AbstractController {
 		$this->request = $request;
 		$this->response = $response;
 		$this->executeInjectionDependence();
+		$this->layoutInit();
 		$this->init();
 	}
 
 	public function init() { }
+	private function layoutInit() {
+		$this->layout = new Layout();
+		$this->layout->setLayout(RABBIT_LAYOUT_THEME_DEFAULT);
+	}
 
 	protected function preDispatch() {}
 	protected function postDispatch() {}
@@ -59,12 +72,15 @@ abstract class AbstractController {
 		$actionReturn = $this->$action();
 
 		if($actionReturn instanceof View\View && $this->renderer){
-			// se não for definido uma view no retorno é definido um padrão
-			/*if(!$view)
-				$view = new View();*/
 
 			$content = $this->getResponse()->getContent();
 			$content .= $actionReturn->render();
+
+			# renderizando layout
+			if($this->renderLayout){
+				$content = $this->layout->render($content);
+			}
+
 			$this->getResponse()->setContent($content);
 			$this->getResponse()->prepare($this->getRequest());
 		}
@@ -94,7 +110,7 @@ abstract class AbstractController {
 		$this->response = $response;
 	}
 
-	public function executeInjectionDependence() {
+	private function executeInjectionDependence() {
 
 		$args = array_merge($this->request->query->all(), $this->request->request->all());
 		$this->dependenceArgsClass($args);

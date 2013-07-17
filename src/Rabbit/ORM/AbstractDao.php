@@ -3,6 +3,10 @@ namespace Rabbit\ORM;
 
 use Rabbit\ORM\Exception\ORMException;
 
+/**
+ * Class AbstractDao
+ * @package Rabbit\ORM
+ */
 class AbstractDao {
 
 	protected $entity;
