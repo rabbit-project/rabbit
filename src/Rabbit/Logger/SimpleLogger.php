@@ -20,7 +20,7 @@ class SimpleLogger implements LoggerInterface {
 		$this->_type = $type;
 		$this->_exception = $e;
 		$this->_timestamp = time();
-		EventManager::fire("logger-register", array($this));
+		EventManager::fire('Rabbit\Event\Log\Register', array($this));
 	}
 	
 	public function __toString() {

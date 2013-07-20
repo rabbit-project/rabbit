@@ -10,6 +10,7 @@ use Rabbit\Logger\LoggerType;
 use Rabbit\Routing\Router;
 use Rabbit\Routing\RouterException;
 use Rabbit\Service\ServiceLocator;
+use Rabbit\Event\EventManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Yaml\Yaml;
@@ -143,6 +144,13 @@ class Front {
 							$plugin = new $pluginName($this->_request, $this->_response);
 							$this->registerPlugin($plugin);
 						}
+					}
+
+					if(isset($config['listeners'])){
+
+						foreach($config['listeners'] as $eventName => $eventFn)
+							EventManager::registerListener($eventName, $eventFn);
+
 					}
 				}
 				

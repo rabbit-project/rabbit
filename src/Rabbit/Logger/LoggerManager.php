@@ -21,7 +21,7 @@ class LoggerManager {
 	
 	private function __construct() {
 		$this->_nivelLogger = LoggerType::get("DEBUG");
-		EventManager::registerListener("logger-register", array($this,"loggerPrinterFile"));
+		EventManager::registerListener('Rabbit\Event\Log\Register', array($this,"loggerPrinterFile"));
 	}
 	
 	/**

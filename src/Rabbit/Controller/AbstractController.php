@@ -7,6 +7,7 @@ use Rabbit\Layout\Layout;
 use Rabbit\ServiceLocator;
 use Rabbit\View;
 use Rabbit\View\ViewInterface;
+use Rabbit\Event\EventManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -42,6 +43,9 @@ abstract class AbstractController {
 		$this->request = $request;
 		$this->response = $response;
 		$this->executeInjectionDependence();
+
+		EventManager::fire('Rabbit\Event\Controller\Start', array($this));
+
 		$this->layoutInit();
 		$this->init();
 	}
@@ -57,6 +61,7 @@ abstract class AbstractController {
 
 	public function dispatch($action) {
 		$this->preDispatch();
+		EventManager::fire('Rabbit\Event\Controller\BeforeDispatched', array($this, $action));
 
 		if(preg_match("#-#", $action)){
 			$action = preg_replace_callback("#-(.)#", function($matche){
@@ -70,15 +75,18 @@ abstract class AbstractController {
 			throw new ActionNotFoundException(sprintf("Não foi possível encontrar a ação <strong>%s</strong> no controller: <strong>%s</strong>", $action, get_class($this)));
 
 		$actionReturn = $this->$action();
+		EventManager::fire('Rabbit\Event\Controller\ActionCalled', array($this, $actionReturn));
 
 		if($actionReturn instanceof View\View && $this->renderer){
 
 			$content = $this->getResponse()->getContent();
 			$content .= $actionReturn->render();
+			EventManager::fire('Rabbit\Event\Controller\RenderViewCalled', array($this, $content));
 
 			# renderizando layout
 			if($this->renderLayout){
 				$content = $this->layout->render($content);
+				EventManager::fire('Rabbit\Event\Controller\RenderLayoutCalled', array($this, $content));
 			}
 
 			$this->getResponse()->setContent($content);
@@ -86,6 +94,7 @@ abstract class AbstractController {
 		}
 
 		$this->postDispatch();
+		EventManager::fire('Rabbit\Event\Controller\AfterDispatched', array($this, $action));
 	}
 
 	/**

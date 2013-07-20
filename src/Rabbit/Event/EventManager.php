@@ -11,10 +11,15 @@ abstract class EventManager {
 	private function __clone(){}
 	private function __construct(){}
 	
-	public static function fire($eventName, array $obj=array(), &$returns=array()) {
+	public static function fire($eventName, array $obj=array()) {
+		$returns = null;
 		if(isset(self::$_events[$eventName]))
-			foreach(self::$_events[$eventName] as $event)
-				$returns[] = call_user_func_array($event, $obj);
+			foreach(self::$_events[$eventName] as $event){
+				$return = call_user_func_array($event, $obj);
+				if($return!=null)
+					$returns[] = call_user_func_array($event, $obj);
+			}
+		return $returns;
 	}
 	
 	public static function registerListener($eventName, $fn) {
