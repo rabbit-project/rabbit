@@ -12,6 +12,7 @@
         "symfony/http-foundation": "2.*@dev",
 		"symfony/translation": "2.*@dev",
 		"symfony/yaml": "2.*@dev",
+		"symfony/config": "2.*@dev",
 		"doctrine/orm": "2.*@dev"
     },
     "authors": [
