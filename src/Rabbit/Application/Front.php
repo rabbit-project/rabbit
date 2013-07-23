@@ -57,7 +57,15 @@ class Front {
 				
 		if(!$this->_request)
 			$this->_request = Request::createFromGlobals();
-		
+
+		$localeNew = $this->_request->get('locale');
+		$locale = ($localeNew)? $localeNew : $this->_request->getLocale();
+
+		if($localeNew)
+			$this->_request->getSession()->set('locale',$locale);
+		//$this->_request->getSession()
+		//$this->_request->setLocale($this->_request->getSession()->get('locale'));
+
 		if(!$this->_response)
 			$this->_response = new Response();
 

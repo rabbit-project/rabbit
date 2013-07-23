@@ -1,8 +1,8 @@
 <?php
 namespace Rabbit\Service\Exception;
 
-use Rabbit\Lang\Exception\ExceptionRabbit;
+use Rabbit\Lang\Exception\RabbitException;
 
-class ServiceException extends ExceptionRabbit {
+class ServiceException extends RabbitException {
 	
 }

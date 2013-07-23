@@ -1,4 +1,4 @@
 <?php
 namespace Rabbit\Lang\Exception;
 
-class EnumException extends ExceptionRabbit { }
+class EnumException extends RabbitException { }

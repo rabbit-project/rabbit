@@ -17,7 +17,7 @@ class Translator extends HelperAbstract{
 
 	public function trans($id, array $parameters = array(), $domain = null, $locale = null){
 		$domain = ($domain != null)? $domain : ucfirst($this->getRequest()->get('module'));
-		$this->translate->trans($id, $parameters, $domain, $locale);
+		return $this->translate->trans($id, $parameters, $domain, $locale);
 	}
 
 }

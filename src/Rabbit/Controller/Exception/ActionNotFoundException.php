@@ -1,8 +1,8 @@
 <?php
 namespace Rabbit\Controller\Exception;
 
-use Rabbit\Lang\Exception\ExceptionRabbit;
+use Rabbit\Lang\Exception\RabbitException;
 
-class ActionNotFoundException extends ExceptionRabbit {
+class ActionNotFoundException extends RabbitException {
 	
 }
