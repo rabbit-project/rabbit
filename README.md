@@ -3,6 +3,20 @@ Rabbit [![Build Status](https://travis-ci.org/rabbit-project/rabbit.png?branch=d
 
 Rabbit é um mini-framewok para auxiliar a criação do RabbitCMS
 
+Framework implementa:
+
+```
+  - Controller
+  - View
+  - Dao (Doctrine 2)
+  - Layout
+  - LogManager
+  - EventManager
+  - Acl
+  - Routing
+  - ServiceLocator
+```
+
 Instalação
 ======
 
