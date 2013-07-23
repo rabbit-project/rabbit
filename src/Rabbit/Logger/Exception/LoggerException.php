@@ -1,6 +1,8 @@
 <?php
 namespace Rabbit\Logger\Exception;
 
-class LoggerException extends \Exception {
+use Rabbit\Lang\Exception\ExceptionRabbit;
+
+class LoggerException extends ExceptionRabbit {
 	
 }

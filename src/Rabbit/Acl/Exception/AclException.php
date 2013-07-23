@@ -2,6 +2,8 @@
 namespace Rabbit\Acl\Exception;
 
 
-class AclException extends \Exception{
+use Rabbit\Lang\Exception\ExceptionRabbit;
+
+class AclException extends ExceptionRabbit {
 
 }

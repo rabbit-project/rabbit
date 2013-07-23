@@ -44,7 +44,7 @@ class Front {
 	private $_modules = array();
 	
 	/**
-	 * @var multiple:PluginInterface
+	 * @var PluginInterface[]
 	 */
 	private $_plugins = array();
 	
@@ -60,17 +60,26 @@ class Front {
 		
 		if(!$this->_response)
 			$this->_response = new Response();
-		
-		$this->initLogger();
-		
-		if(!$this->_router)
-			$this->_router = new Router($this->_request);		
-		
-		$this->mappingModules();
-		//$this->initPlugin();
-		
-		if(isset($this->_config["moduleDefault"]))
-			$this->_router->setModuleDefault($this->_config["moduleDefault"]);
+
+	}
+
+	private function loadServices(){
+
+		$fileURL = RABBIT_PATH_CONFIG . DS . 'services.config.php';
+
+		$returnEvent = EventManager::fire('Rabbit\Event\Front\LoadService');
+
+		if(!file_exists($fileURL) && ($returnEvent == null &&  empty($returnEvent))){
+			$this->_log->log(sprintf('Registro de Services não encontrado'), LoggerType::get('RABBIT'));
+			return ;
+		}
+
+		$servicesMap = require_once ($fileURL);
+
+		$services = ($returnEvent!= null)? array_merge($servicesMap, $returnEvent) : $servicesMap;
+
+		# registrando serviço
+		$this->registerServices($services);
 	}
 	
 	private function initPlugin() {
@@ -99,8 +108,10 @@ class Front {
 		$fileConfigGlobalURI = RABBIT_PATH_APPLICATION . DS . "config" . DS . "global.config.php";
 		$fileConfigLocalURI = RABBIT_PATH_APPLICATION . DS . "config" . DS . "local.config.php";
 		
-		if(!file_exists($fileConfigGlobalURI))
+		if(!file_exists($fileConfigGlobalURI)){
+			$this->_log->log(sprintf("Não foi possível encontrar o arquivo de configuração: <strong>%s</strong>", $fileConfigGlobalURI), LoggerType::get('RABBIT'));
 			throw new ApplicationException(sprintf("Não foi possível encontrar o arquivo de configuração: <strong>%s</strong>", $fileConfigGlobalURI));
+		}
 		
 		$this->_config = include $fileConfigGlobalURI;
 		
@@ -117,6 +128,9 @@ class Front {
 		$load = ServiceLocator::getService('Rabbit\Load');
 		foreach($dirModules as $dirModule){
 			if($dirModule->isDir() && !$dirModule->isDot()){
+
+				$pathFullModule = RABBIT_PATH_MODULE . DS . $dirModule->getFilename();
+
 				// registrando namespace
 				$load->add($dirModule->getFilename(), RABBIT_PATH_MODULE);
 				
@@ -134,8 +148,10 @@ class Front {
 					if(isset($config["plugins"])){
 						$plugins = array();
 						
-						if(!is_string($config["plugins"]) && !is_array($config["plugins"]))
+						if(!is_string($config["plugins"]) && !is_array($config["plugins"])){
+							$this->_log->log(sprintf("A configuração do plugin no modulo %s não é uma String ou um Array", $dirModule->getFilename()), LoggerType::get('RABBIT'));
 							throw new ApplicationException(sprintf("A configuração do plugin no modulo %s não é uma String ou um Array", $dirModule->getFilename()));
+						}
 						
 						$plugins = (is_string($config["plugins"]))? array($config["plugins"]) : $config["plugins"];
 						
@@ -160,13 +176,36 @@ class Front {
 				
 				$router = Yaml::parse($routerFile);
 				$this->addRouters($router,strtolower($dirModule->getFilename()));
+
+
+				# Registrando o arquivo de tradução
+				$pathLang = $pathFullModule . DS . 'Lang';
+
+				if(file_exists($pathLang)){
+
+					$dirModulesLangs = new DirectoryIterator($pathLang);
+
+					/** @var \Symfony\Component\Translation\Translator $serviceTranslator */
+					$serviceTranslator = \Rabbit\Service\ServiceLocator::getService('Rabbit\Service\Translator');
+
+					/** @var DirectoryIterator $dirLangFile */
+					foreach($dirModulesLangs as $dirLangFile){
+						if($dirLangFile->isDot() || $dirLangFile->isDir())
+							continue;
+
+						$serviceTranslator->addResource($dirLangFile->getExtension(), $dirLangFile->getPathname(), preg_replace('#\.(.*)$#','',$dirLangFile->getFilename()), $dirModule->getFilename());
+					}
+
+				}
 			}
 		}		
 	}
-	
+
 	/**
 	 * @param array $routers
-	 * @throws RouterException
+	 * @param null  $module
+	 *
+	 * @throws \Rabbit\Routing\RouterException
 	 */
 	public function addRouters(array $routers, $module = null) {
 		foreach ($routers as $name => $params){
@@ -193,8 +232,10 @@ class Front {
 	 */
 	private function registerServices(array $services) {
 		foreach($services as $servKey => $serv){
-			if(ServiceLocator::isRegistred($servKey))
+			if(ServiceLocator::isRegistred($servKey)){
+				$this->_log->log(sprintf('O servico <strong>%s</strong> já existe o mesmo não pode ser novamente registrado', $servKey), LoggerType::get('RABBIT'));
 				throw new ApplicationException(sprintf('O servico <strong>%s</strong> já existe o mesmo não pode ser novamente registrado', $servKey));
+			}
 			
 			if(is_array($serv)){
 				ServiceLocator::register($servKey, $serv["fn"], $serv["unique"]);
@@ -218,9 +259,24 @@ class Front {
 	
 	public function run() {
 		$this->_log->log("Iniciando Front", LoggerType::get("RABBIT"));
-		$self = self::getInstance();
-		$this->_router->execute();		
-		$self->dispatch();
+
+		$this->initLogger();
+		$this->loadServices();
+
+		if(!$this->_router)
+			$this->_router = new Router($this->_request);
+
+		$this->mappingModules();
+
+		//$this->initPlugin();
+
+		if(isset($this->_config["moduleDefault"]))
+			$this->_router->setModuleDefault($this->_config["moduleDefault"]);
+
+		$this->_router->execute();
+
+		$this->dispatch();
+
 		$this->_log->log("Finalizando Front", LoggerType::get("RABBIT"));
 	}
 	
@@ -236,6 +292,7 @@ class Front {
 		$clsName = sprintf('%s\Namespaces\%s\Controller\%sController', $module, $namespace, $controller);;
 
 		if(!file_exists(str_replace('\\', DS, RABBIT_PATH_MODULE . DS . $clsName . '.php'))){
+			$this->_log->log(sprintf("Não foi possível encontrar o Controller: <strong>%s</strong>", $clsName), LoggerType::get('RABBIT'));
 			throw new ApplicationException(sprintf("Não foi possível encontrar o Controller: <strong>%s</strong>", $clsName));
 		}else if($this->_router->getMapped() == null) {
 			throw new ApplicationException(sprintf("Roteamento não encontrado"), 404);

@@ -1,7 +1,8 @@
 <?php
 namespace Rabbit\Event\Exception;
 
+use Rabbit\Lang\Exception\ExceptionRabbit;
 
-class EventException extends \Exception{
+class EventException extends ExceptionRabbit {
 
 }
