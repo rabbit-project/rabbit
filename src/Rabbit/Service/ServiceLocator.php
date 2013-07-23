@@ -1,7 +1,7 @@
 <?php
 namespace Rabbit\Service;
 
-use Rabbit\Service\ServiceException;
+use Rabbit\Service\Exception\ServiceException;
 
 abstract class ServiceLocator {
 	

@@ -30,7 +30,7 @@ abstract class EntityManager {
 			$evm->addEventListener(Events::loadClassMetadata, new TablePrefix($configDataSource['prefix']));
 		}
 
-		$configAnnotation = Setup::createAnnotationMetadataConfiguration(array(), true);
+		$configAnnotation = Setup::createAnnotationMetadataConfiguration(array(), RABBIT_DOCTRINE_ISDEVMOD, null, null, false);
 
 		return EM::create($configDataSource, $configAnnotation, $evm);
 	}

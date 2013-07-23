@@ -1,4 +1,6 @@
 <?php
 namespace Rabbit\View\Exception;
 
-class ViewException extends \Exception {}
+use Rabbit\Lang\Exception\ExceptionRabbit;
+
+class ViewException extends ExceptionRabbit {}

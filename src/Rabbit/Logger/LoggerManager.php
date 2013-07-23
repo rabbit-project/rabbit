@@ -2,6 +2,7 @@
 namespace Rabbit\Logger;
 
 use Rabbit\Event\EventManager;
+use Rabbit\Logger\Exception\LoggerException;
 
 class LoggerManager {
 	
@@ -55,25 +56,35 @@ class LoggerManager {
 			return;
 		
 		if($logger->getType()->getValue()>=$this->_nivelLogger->getValue()){
-			$file = ($this->_exportConfig && isset($this->_exportConfig['file']))? $this->_exportConfig['file'] : RABBIT_PATH . '/temp/logger/rabbit.log';
+			$filePath = ($this->_exportConfig && isset($this->_exportConfig['filePath']))? $this->_exportConfig['filePath'] : null;
+
+			if($filePath == null)
+				throw new LoggerException(sprintf('Não foi mapeado o <strong>filePath</strong> para o export LoggerManager'));
+
+			if(!file_exists($filePath))
+				mkdir($filePath, 0755, true);
+
+			$fileName = ($this->_exportConfig && isset($this->_exportConfig['fileName']))? $this->_exportConfig['fileName'] : 'rabbit.log';
 			$maxSize = ($this->_exportConfig && isset($this->_exportConfig['maxSizeRotation']))? $this->_exportConfig['maxSizeRotation'] : '2MB';
-			
+
+			$fileURI = $filePath . DS . $fileName;
+
 			// Rotation File
-			if(file_exists($file)){
-				$size = ceil(filesize($file) / 1024);
+			if(file_exists($fileURI)){
+				$size = ceil(filesize($fileURI) / 1024);
 				if($size>=$maxSize){
 					$i = 1;
 					while(true){
-						$fRename = $file.$i++;
+						$fRename = $fileURI.$i++;
 						if(!file_exists($fRename)){
-							rename($file, $fRename);
+							rename($fileURI, $fRename);
 							break;
 						}
 					}
 				}
 			}
 			
-			$resource = fopen($file, 'a');
+			$resource = fopen($fileURI, 'a');
 			
 			$logString = sprintf("[%s][%s][%s]: %s %s\r\n", 
 				$logger->getType()->getName(), 

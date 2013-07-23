@@ -2,6 +2,8 @@
 namespace Rabbit\ORM\Exception;
 
 
-class ORMException extends \Exception{
+use Rabbit\Lang\Exception\ExceptionRabbit;
+
+class ORMException extends ExceptionRabbit {
 
 }

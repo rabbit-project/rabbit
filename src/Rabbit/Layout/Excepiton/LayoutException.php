@@ -1,6 +1,8 @@
 <?php
 namespace Rabbit\Layout\Excepiton;
 
-class LayoutException extends \Exception{
+use Rabbit\Lang\Exception\ExceptionRabbit;
+
+class LayoutException extends ExceptionRabbit {
 
 }
