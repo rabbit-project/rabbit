@@ -11,8 +11,11 @@ use Rabbit\Routing\Router;
 use Rabbit\Routing\RouterException;
 use Rabbit\Service\ServiceLocator;
 use Rabbit\Event\EventManager;
+use Rabbit\Session\SessionManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -58,13 +61,25 @@ class Front {
 		if(!$this->_request)
 			$this->_request = Request::createFromGlobals();
 
-		$localeNew = $this->_request->get('locale');
-		$locale = ($localeNew)? $localeNew : $this->_request->getLocale();
+		$sessionConfig = $this->getConfig('session');
 
+		$sessionName = ($sessionConfig && isset($sessionConfig['name']))? $sessionConfig['name'] : 'Rabbit\Session';
+
+		$session = SessionManager::session($sessionName);
+
+		if($sessionConfig && isset($sessionConfig['lifetime']))
+			$session->migrate(false, $sessionConfig['lifetime']);
+
+		$this->_request->setSession($session);
+
+
+		$localeNew = $this->_request->get('locale');
 		if($localeNew)
-			$this->_request->getSession()->set('locale',$locale);
-		//$this->_request->getSession()
-		//$this->_request->setLocale($this->_request->getSession()->get('locale'));
+			$session->set('locale', $localeNew);
+
+		$locale = ($session->get('locale'))? $session->get('locale') : $this->_request->getLocale();
+
+		$this->_request->setLocale($locale);
 
 		if(!$this->_response)
 			$this->_response = new Response();
@@ -364,6 +379,10 @@ class Front {
     {
         return $this->_response;
     }
+
+	public function getConfig($name, $default=''){
+		return isset($this->_config[$name])? $this->_config[$name] : $default;
+	}
 
 
 }

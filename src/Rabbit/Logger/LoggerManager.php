@@ -46,10 +46,11 @@ class LoggerManager {
 		$this->_logger[$name] = new SimpleLogger($name); 
 		return $this->_logger[$name];
 	}
-	
+
 	/**
-	 * Grava logger no arquivo
+	 * Grava log em arquivo
 	 * @param LoggerInterface $logger
+	 * @throws Exception\LoggerException
 	 */
 	public function loggerPrinterFile(LoggerInterface $logger) {
 		if(!$this->isActive())
@@ -61,6 +62,7 @@ class LoggerManager {
 			if($filePath == null)
 				throw new LoggerException(sprintf('Não foi mapeado o <strong>filePath</strong> para o export LoggerManager'));
 
+			# caso não exista cria a pasta
 			if(!file_exists($filePath))
 				mkdir($filePath, 0755, true);
 
