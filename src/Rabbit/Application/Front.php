@@ -12,6 +12,7 @@ use Rabbit\Routing\RouterException;
 use Rabbit\Service\ServiceLocator;
 use Rabbit\Event\EventManager;
 use Rabbit\Session\SessionManager;
+use Rabbit\Lang\ClassReflection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -24,6 +25,8 @@ use Symfony\Component\Yaml\Yaml;
  * @author Erick Leão <erickleao@rabbit-cms.com.br>
  */
 class Front {
+	
+	use ClassReflection;
 	
 	private static $_instance;
 	
@@ -53,8 +56,8 @@ class Front {
 	
 	private $_log;
 	
-	private function __construct() {
-		$this->_log = LoggerManager::getInstance()->getLogger(get_class());
+	private function __construct() {		
+		$this->_log = LoggerManager::getInstance()->getLogger($this->getClass()->getName());
 		
 		$this->initWhithConfig();
 				
@@ -281,9 +284,9 @@ class Front {
 	}
 	
 	public function run() {
-		$this->_log->log("Iniciando Front", LoggerType::get("RABBIT"));
-
 		$this->initLogger();
+		$this->_log->log("Iniciando Front", LoggerType::get("RABBIT"));
+		
 		$this->loadServices();
 
 		if(!$this->_router)
@@ -312,7 +315,7 @@ class Front {
 		$controller = ucfirst($this->_request->get("controller"));
 		$action 	= $this->_request->get("action");
 		
-		$clsName = sprintf('%s\Namespaces\%s\Controller\%sController', $module, $namespace, $controller);;
+		$clsName = sprintf('%s\Namespaces\%s\Controller\%sController', $module, $namespace, $controller);
 
 		if(!file_exists(str_replace('\\', DS, RABBIT_PATH_MODULE . DS . $clsName . '.php'))){
 			$this->_log->log(sprintf("Não foi possível encontrar o Controller: <strong>%s</strong>", $clsName), LoggerType::get('RABBIT'));

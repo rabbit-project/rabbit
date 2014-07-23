@@ -19,5 +19,12 @@ class Translator extends HelperAbstract{
 		$domain = ($domain != null)? $domain : ucfirst($this->getRequest()->get('module'));
 		return $this->translate->trans($id, $parameters, $domain, $locale);
 	}
+	
+	/**
+	 * @return \Symfony\Component\Translation\Translator
+	 */
+	public function getInstance() {
+		return $this->translate;
+	}
 
 }
