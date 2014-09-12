@@ -63,12 +63,7 @@ Na propriedade `defaults` temos 5 argumentos que são tipos comportamentais pois
 		<td>string</td>
 		<td>Determina que módulo você está solicitando [Default: application]</td>
 	</tr>
-		<tr>
-		<td>namespace</td>
-		<td>string</td>
-		<td>Determina que namespace você está solicitando [Default: main]</td>
-	</tr>
-		<tr>
+	<tr>
 		<td>controller</td>
 		<td>string</td>
 		<td>Determina que controller você está solicitando [Default: index]</td>
@@ -104,7 +99,6 @@ nome_mapeamento:
  map: ''
  defaults:
   arg1: 'value1'
-  namespace: 'main'
  options:
   option1:
    arg1: ''
@@ -121,7 +115,7 @@ MeuRouterArtigo:
   module: 'artigo'
   
 # Mapeamento utilizando como tipo Segment
-Modulox\Namespacey\Nomez:
+Modulox\Nomez:
  type: 'Rabbit\Routing\Mapping\Segment'
  map: '/artigo/:id'
  defaults:
@@ -179,7 +173,7 @@ O Roteramento do tipo `Literal` é basicamente conforme sua tradução "ao pé d
 RouterMap:
 	
 ```yaml
-Modulox\Namespacey\Usuarios:
+Modulox\Usuarios:
  map: '/usuarios'
  defaults:
   controller: 'usuario'
@@ -189,7 +183,6 @@ Modulox\Namespacey\Usuarios:
 Com isso ao fazer o request para a url informada o mesmo será combinado com o mapeamento e iria mandar o usuário para:
 	
 	module:          application
-	namespace:       main
 	controller:      usuario
 	action:          list
 	
